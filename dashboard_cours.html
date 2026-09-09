@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📚 Gestion des cours</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="api.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 220px;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #66b0ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar .logo span { color: white; font-weight: 400; }
+        .sidebar .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+            margin: 12px 0 8px 0;
+        }
+        .sidebar .nav-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 3px;
+            font-weight: 500;
+            font-size: 14px;
+            touch-action: manipulation;
+        }
+        .sidebar .nav-item:hover { background: rgba(255,255,255,0.06); }
+        .sidebar .nav-item.active { background: #2d2d44; border-left: 3px solid #66b0ff; }
+        .sidebar .nav-item .badge {
+            float: right;
+            background: rgba(255,255,255,0.1);
+            padding: 0 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+        }
+        .sidebar .btn-add {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .btn-add:active { transform: scale(0.97); }
+        .sidebar .btn-add:hover { background: #5a32a3; }
+        .sidebar .btn-back {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .btn-back:active { transform: scale(0.97); }
+        .sidebar .btn-back:hover { background: rgba(255,255,255,0.15); }
+
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1001;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .sidebar-overlay.active { display: block; }
+
+        /* MAIN */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 28px;
+            overflow: hidden;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .top-bar h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .top-bar h1 small {
+            font-weight: 400;
+            font-size: 15px;
+            color: #6c757d;
+        }
+        .top-bar .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .top-bar .actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .top-bar .actions button:active { transform: scale(0.96); }
+        .btn-export-all { background: #28a745; color: white; }
+        .btn-export-all:hover { background: #218838; }
+
+        /* CONTENU ARBORESCENT */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0f0;
+        }
+
+        /* TRIMESTRE */
+        .trimestre-node {
+            margin: 6px 0;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .trimestre-node .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-weight: 600;
+            font-size: 15px;
+            touch-action: manipulation;
+            gap: 10px;
+        }
+        .trimestre-node .header:hover { background: #f0f0f0; }
+        .trimestre-node .header .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .trimestre-node .header .left .arrow {
+            font-size: 14px;
+            transition: transform 0.2s;
+            color: #6c757d;
+        }
+        .trimestre-node .header .left .arrow.open { transform: rotate(90deg); }
+        .trimestre-node .header .badge-modules {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        .trimestre-node .children {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease;
+            padding: 0 12px;
+        }
+        .trimestre-node .children.open { max-height: 5000px; padding: 12px; }
+
+        /* MODULE */
+        .module-node {
+            margin: 6px 0;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #fafbfc;
+        }
+        .module-node .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-weight: 500;
+            font-size: 14px;
+            touch-action: manipulation;
+            gap: 8px;
+            border-bottom: 1px solid transparent;
+        }
+        .module-node .header:hover { background: #f5f5f5; }
+        .module-node .header .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+        .module-node .header .left .arrow {
+            font-size: 12px;
+            transition: transform 0.2s;
+            color: #6c757d;
+            flex-shrink: 0;
+        }
+        .module-node .header .left .arrow.open { transform: rotate(90deg); }
+        .module-node .header .left .module-title {
+            font-weight: 600;
+            cursor: text;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            flex: 1;
+            min-width: 50px;
+        }
+        .module-node .header .left .module-title:hover {
+            background: #e9ecef;
+        }
+        .module-node .header .left .module-title.editing {
+            background: white;
+            outline: 2px solid #6f42c1;
+            outline-offset: 0;
+        }
+        .module-node .header .left .module-title input {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            outline: none;
+            color: #1a1a2e;
+            padding: 2px 4px;
+        }
+        .module-node .header .module-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .module-node .header .module-actions button {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.15s, transform 0.1s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            color: #6c757d;
+        }
+        .module-node .header .module-actions button:hover { background: #e9ecef; color: #1a1a2e; }
+        .module-node .header .module-actions button:active { transform: scale(0.92); }
+        .module-node .header .module-actions .btn-del-mod { color: #dc3545; }
+        .module-node .header .module-actions .btn-del-mod:hover { background: #f8d7da; color: #dc3545; }
+        .module-node .children {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease;
+            padding: 0 12px;
+        }
+        .module-node .children.open { max-height: 3000px; padding: 8px 12px 12px 12px; }
+
+        /* SÉANCE */
+        .seance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin: 2px 0;
+            transition: background 0.15s;
+            gap: 8px;
+            border-left: 3px solid transparent;
+        }
+        .seance-item:hover { background: #f5f5f5; border-left-color: #6f42c1; }
+        .seance-item .name {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex: 1;
+            min-width: 0;
+            cursor: text;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .seance-item .name:hover { background: #e9ecef; }
+        .seance-item .name.editing {
+            background: white;
+            outline: 2px solid #6f42c1;
+            outline-offset: 0;
+        }
+        .seance-item .name input {
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            outline: none;
+            color: #1a1a2e;
+            padding: 2px 4px;
+        }
+        .seance-item .name .num {
+            color: #6c757d;
+            font-weight: 400;
+            margin-right: 4px;
+            flex-shrink: 0;
+        }
+        .seance-item .name .badge-indicative {
+            font-size: 10px;
+            background: #e9ecef;
+            color: #6c757d;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-weight: 400;
+        }
+        .seance-item .name .badge-lecon {
+            font-size: 10px;
+            background: #28a745;
+            color: white;
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+        .seance-item .name .titre-lecon {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 400;
+        }
+        .seance-item .actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .seance-item .actions button {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background 0.15s, transform 0.1s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .seance-item .actions button:active { transform: scale(0.92); }
+        .seance-item .actions .btn-edit { background: #e9ecef; color: #333; }
+        .seance-item .actions .btn-edit:hover { background: #dee2e6; }
+        .seance-item .actions .btn-project { background: #28a745; color: white; }
+        .seance-item .actions .btn-project:hover { background: #218838; }
+        .seance-item .actions .btn-move { background: transparent; color: #6c757d; padding: 4px 6px; }
+        .seance-item .actions .btn-move:hover { background: #e9ecef; }
+        .seance-item .actions .btn-del { background: transparent; color: #dc3545; padding: 4px 6px; }
+        .seance-item .actions .btn-del:hover { background: #f8d7da; }
+        .seance-item .actions .btn-add-seance { background: transparent; color: #6f42c1; padding: 4px 8px; font-weight: 600; }
+        .seance-item .actions .btn-add-seance:hover { background: #e7f3ff; }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .empty-module {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .add-module-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            margin: 8px 0;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            color: #6f42c1;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+        }
+        .add-module-btn:hover {
+            background: #f8f9fa;
+            border-color: #6f42c1;
+        }
+
+        .add-seance-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px;
+            margin: 4px 0;
+            border: 2px dashed #dee2e6;
+            border-radius: 6px;
+            background: transparent;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            color: #6f42c1;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+        }
+        .add-seance-btn:hover {
+            background: #f8f9fa;
+            border-color: #6f42c1;
+        }
+
+        /* Indicateur de sauvegarde */
+        .save-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 13px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.6;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .save-status.saving { opacity: 1; background: #6f42c1; }
+        .save-status.saved { opacity: 1; background: #28a745; }
+        .save-status.error { opacity: 1; background: #dc3545; }
+
+        /* Drag handle */
+        .drag-handle {
+            cursor: grab;
+            color: #adb5bd;
+            font-size: 14px;
+            padding: 0 4px;
+            user-select: none;
+            opacity: 0.4;
+            transition: opacity 0.2s;
+        }
+        .drag-handle:hover { opacity: 0.8; }
+        .seance-item.dragging {
+            opacity: 0.4;
+            background: #e7f3ff;
+        }
+        .seance-item.drag-over {
+            border-left-color: #6f42c1;
+            background: #f0ecf9;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .main { padding: 16px; padding-top: 60px; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .content { padding: 12px; }
+            .seance-item { flex-wrap: wrap; }
+            .seance-item .actions { flex-wrap: wrap; }
+            .trimestre-node .children { padding: 8px; }
+            .module-node .children { padding: 8px; }
+            .save-status { bottom: 10px; right: 10px; font-size: 11px; padding: 6px 12px; }
+            .module-node .header { flex-wrap: wrap; }
+            .module-node .header .module-actions { margin-left: auto; }
+        }
+        @media (max-width: 480px) {
+            .top-bar h1 { font-size: 18px; }
+            .top-bar .actions button { font-size: 13px; padding: 8px 14px; }
+            .seance-item .name { font-size: 13px; }
+            .module-node .header .left .module-title { font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="sidebar" id="sidebar">
+        <div class="logo">📚 <span>Cours</span></div>
+        <div class="section-title">Niveaux</div>
+        <div id="niveauxList"></div>
+        <button class="btn-add" onclick="ajouterNiveau()">+ Ajouter un niveau</button>
+        <button class="btn-back" onclick="window.location.href='index.html'">🏠 Accueil</button>
+    </div>
+
+    <div class="main">
+        <div class="top-bar">
+            <h1 id="titreNiveau">Sélectionnez un niveau <small id="infoModules"></small></h1>
+            <div class="actions">
+                <button class="btn-export-all" onclick="exporterToutesDonnees()">💾 Sauvegarde</button>
+            </div>
+        </div>
+
+        <div class="content" id="contentArea">
+            <div class="empty-message">Sélectionnez un niveau dans la barre latérale.</div>
+        </div>
+    </div>
+
+    <div class="save-status" id="saveStatus">
+        <span id="saveIcon">💾</span>
+        <span id="saveText">Sauvegardé</span>
+    </div>
+
+    <script>
+        // ============================================================
+        // ÉTAT
+        // ============================================================
+        let niveauxCours = [];
+        let dataCache = {};
+        let niveauActuel = null;
+
+        const TRIMESTRES = ['Trimestre 1', 'Trimestre 2', 'Trimestre 3'];
+
+        // IDs pour les nouveaux éléments
+        let idCounter = Date.now();
+
+        function genererId() {
+            return 'mod_' + (idCounter++) + '_' + Date.now().toString(36);
+        }
+
+        function genererIdSeance() {
+            return 's_' + (idCounter++) + '_' + Date.now().toString(36);
+        }
+
+        // ============================================================
+        // MIGRATION - Convertir l'ancienne structure vers la nouvelle
+        // ============================================================
+        function migrerDonnees(niveau, data) {
+            // Si déjà migré, retourner tel quel
+            if (data.modules && Array.isArray(data.modules)) {
+                return data;
+            }
+
+            const modules = [];
+            const anciennesCles = Object.keys(data).filter(k => k.startsWith('donnees_seances_'));
+
+            if (anciennesCles.length === 0) {
+                // Aucune donnée, créer des modules vides par trimestre
+                TRIMESTRES.forEach((trimestre, tIdx) => {
+                    const module = {
+                        id: genererId(),
+                        trimestre: trimestre,
+                        titre: `Module ${tIdx + 1}`,
+                        ordre: tIdx,
+                        seances: []
+                    };
+                    modules.push(module);
+                });
+                return { modules };
+            }
+
+            // Extraire les données des anciennes clés
+            const seancesParModule = {};
+            anciennesCles.forEach(cle => {
+                // Format: donnees_seances_Niveau__Trimestre__Module
+                const parts = cle.replace('donnees_seances_', '').split('__');
+                if (parts.length >= 3) {
+                    const trimestre = parts[1].replace(/_/g, ' ');
+                    const moduleNom = parts[2].replace(/_/g, ' ');
+                    const key = trimestre + '||' + moduleNom;
+                    seancesParModule[key] = data[cle] || [];
+                }
+            });
+
+            // Créer les modules pour chaque trimestre
+            TRIMESTRES.forEach(trimestre => {
+                // Trouver tous les modules pour ce trimestre
+                const moduleNames = Object.keys(seancesParModule)
+                    .filter(k => k.startsWith(trimestre + '||'))
+                    .map(k => k.split('||')[1]);
+
+                // Si aucun module pour ce trimestre, en créer un vide
+                if (moduleNames.length === 0) {
+                    const module = {
+                        id: genererId(),
+                        trimestre: trimestre,
+                        titre: `Module ${TRIMESTRES.indexOf(trimestre) + 1}`,
+                        ordre: modules.length,
+                        seances: []
+                    };
+                    modules.push(module);
+                    return;
+                }
+
+                // Créer un module pour chaque nom
+                moduleNames.forEach((nom, idx) => {
+                    const key = trimestre + '||' + nom;
+                    const seances = seancesParModule[key] || [];
+                    const module = {
+                        id: genererId(),
+                        trimestre: trimestre,
+                        titre: nom,
+                        ordre: modules.length,
+                        seances: seances.map((s, sIdx) => ({
+                            id: s.id || genererIdSeance(),
+                            titre: s.titre || `Séance ${sIdx + 1}`,
+                            contenu: s.contenu || '',
+                            diaporama: s.diaporama || [],
+                            leconBrute: s.leconBrute || false,
+                            titreLecon: s.titreLecon || '',
+                            indicative: s.indicative !== undefined ? s.indicative : true
+                        }))
+                    };
+                    modules.push(module);
+                });
+            });
+
+            // Trier les modules par ordre
+            modules.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+
+            return { modules };
+        }
+
+        // ============================================================
+        // SIDEBAR RESPONSIVE
+        // ============================================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('menuToggle');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        });
+
+        // ============================================================
+        // INDICATEUR DE SAUVEGARDE
+        // ============================================================
+        function updateSaveStatus(status, message) {
+            const el = document.getElementById('saveStatus');
+            const icon = document.getElementById('saveIcon');
+            const text = document.getElementById('saveText');
+            
+            el.className = 'save-status';
+            if (status === 'saving') {
+                el.classList.add('saving');
+                icon.textContent = '⏳';
+                text.textContent = message || 'Sauvegarde...';
+            } else if (status === 'saved') {
+                el.classList.add('saved');
+                icon.textContent = '✅';
+                text.textContent = message || `Sauvegardé à ${new Date().toLocaleTimeString()}`;
+                setTimeout(() => { el.style.opacity = '0.6'; }, 3000);
+            } else if (status === 'error') {
+                el.classList.add('error');
+                icon.textContent = '❌';
+                text.textContent = message || 'Erreur';
+                setTimeout(() => { el.style.opacity = '0.6'; }, 5000);
+            }
+        }
+
+        // ============================================================
+        // CHARGEMENT
+        // ============================================================
+        async function chargerDonnees() {
+            updateSaveStatus('saving', 'Chargement...');
+            
+            const data = await API.load('all_cours');
+            if (data && data.niveaux) {
+                niveauxCours = data.niveaux;
+                dataCache = data.cours || {};
+                
+                // MIGRATION : Convertir chaque niveau vers la nouvelle structure
+                for (const niveau of niveauxCours) {
+                    if (dataCache[niveau]) {
+                        const migre = migrerDonnees(niveau, dataCache[niveau]);
+                        dataCache[niveau] = migre;
+                    } else {
+                        dataCache[niveau] = { modules: [] };
+                    }
+                }
+            } else {
+                niveauxCours = ['7ème Année de base', '9ème Année de base'];
+                dataCache = {};
+                niveauxCours.forEach(n => { 
+                    dataCache[n] = { modules: [] };
+                    // Créer des modules vides par trimestre
+                    TRIMESTRES.forEach((trimestre, tIdx) => {
+                        dataCache[n].modules.push({
+                            id: genererId(),
+                            trimestre: trimestre,
+                            titre: `Module ${tIdx + 1}`,
+                            ordre: tIdx,
+                            seances: []
+                        });
+                    });
+                });
+            }
+            
+            afficherNiveaux();
+            if (niveauxCours.length > 0) {
+                selectionnerNiveau(niveauxCours[0]);
+            }
+            setInterval(sauvegarderAuto, 30000);
+            updateSaveStatus('saved', 'Données chargées');
+        }
+
+        // ============================================================
+        // AFFICHAGE NIVEAUX
+        // ============================================================
+        function afficherNiveaux() {
+            const container = document.getElementById('niveauxList');
+            container.innerHTML = '';
+            niveauxCours.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'nav-item' + (n === niveauActuel ? ' active' : '');
+                const nbModules = dataCache[n]?.modules?.length || 0;
+                div.innerHTML = `${n} <span class="badge">${nbModules}</span>`;
+                div.onclick = () => selectionnerNiveau(n);
+                container.appendChild(div);
+            });
+        }
+
+        // ============================================================
+        // SÉLECTION NIVEAU
+        // ============================================================
+        function selectionnerNiveau(niveau) {
+            niveauActuel = niveau;
+            if (!dataCache[niveau]) dataCache[niveau] = { modules: [] };
+            if (!dataCache[niveau].modules) dataCache[niveau].modules = [];
+            
+            // Trier les modules par ordre
+            dataCache[niveau].modules.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+            
+            afficherNiveaux();
+            const totalSeances = dataCache[niveau].modules.reduce((sum, m) => sum + (m.seances?.length || 0), 0);
+            document.getElementById('titreNiveau').innerHTML = `📁 ${niveau} <small>${dataCache[niveau].modules.length} modules · ${totalSeances} séances</small>`;
+            afficherArborescence();
+        }
+
+        // ============================================================
+        // AFFICHAGE ARBORESCENCE
+        // ============================================================
+        function afficherArborescence() {
+            const container = document.getElementById('contentArea');
+            container.innerHTML = '';
+
+            if (!niveauActuel) {
+                container.innerHTML = '<div class="empty-message">Sélectionnez un niveau dans la barre latérale.</div>';
+                return;
+            }
+
+            const modules = dataCache[niveauActuel].modules || [];
+
+            TRIMESTRES.forEach(trimestre => {
+                const modulesTrimestre = modules.filter(m => m.trimestre === trimestre);
+                const trimNode = document.createElement('div');
+                trimNode.className = 'trimestre-node';
+
+                const headerT = document.createElement('div');
+                headerT.className = 'header';
+                headerT.innerHTML = `
+                    <div class="left">
+                        <span class="arrow">▶</span>
+                        <span>📅 ${trimestre}</span>
+                        <span class="badge-modules">${modulesTrimestre.length} module(s)</span>
+                    </div>
+                `;
+                headerT.onclick = () => toggleTrimestre(trimNode);
+                trimNode.appendChild(headerT);
+
+                const childrenT = document.createElement('div');
+                childrenT.className = 'children';
+
+                // Afficher les modules pour ce trimestre
+                modulesTrimestre.forEach((module, modIdx) => {
+                    const modNode = creerModuleNode(module, trimestre);
+                    childrenT.appendChild(modNode);
+                });
+
+                // Bouton Ajouter un module
+                const addBtn = document.createElement('button');
+                addBtn.className = 'add-module-btn';
+                addBtn.innerHTML = '➕ Ajouter un module';
+                addBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    ajouterModule(trimestre);
+                };
+                childrenT.appendChild(addBtn);
+
+                trimNode.appendChild(childrenT);
+                container.appendChild(trimNode);
+            });
+        }
+
+        // ============================================================
+        // CRÉER UN NŒUD MODULE
+        // ============================================================
+        function creerModuleNode(module, trimestre) {
+            const modNode = document.createElement('div');
+            modNode.className = 'module-node';
+            modNode.dataset.moduleId = module.id;
+
+            const seances = module.seances || [];
+
+            // HEADER
+            const header = document.createElement('div');
+            header.className = 'header';
+
+            const left = document.createElement('div');
+            left.className = 'left';
+
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '▶';
+            left.appendChild(arrow);
+
+            const titleSpan = document.createElement('span');
+            titleSpan.className = 'module-title';
+            titleSpan.textContent = module.titre || 'Module sans nom';
+            titleSpan.title = 'Double-clic pour renommer';
+            titleSpan.ondblclick = (e) => {
+                e.stopPropagation();
+                renommerModule(module.id, trimestre);
+            };
+            left.appendChild(titleSpan);
+
+            const actions = document.createElement('div');
+            actions.className = 'module-actions';
+
+            // Bouton déplacer vers le haut
+            const btnUp = document.createElement('button');
+            btnUp.innerHTML = '⬆';
+            btnUp.title = 'Déplacer vers le haut';
+            btnUp.onclick = (e) => {
+                e.stopPropagation();
+                deplacerModule(module.id, trimestre, -1);
+            };
+            actions.appendChild(btnUp);
+
+            // Bouton déplacer vers le bas
+            const btnDown = document.createElement('button');
+            btnDown.innerHTML = '⬇';
+            btnDown.title = 'Déplacer vers le bas';
+            btnDown.onclick = (e) => {
+                e.stopPropagation();
+                deplacerModule(module.id, trimestre, 1);
+            };
+            actions.appendChild(btnDown);
+
+            // Bouton supprimer
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn-del-mod';
+            btnDel.innerHTML = '🗑️';
+            btnDel.title = 'Supprimer ce module';
+            btnDel.onclick = (e) => {
+                e.stopPropagation();
+                supprimerModule(module.id, trimestre);
+            };
+            actions.appendChild(btnDel);
+
+            header.appendChild(left);
+            header.appendChild(actions);
+
+            header.onclick = () => toggleModule(modNode);
+
+            modNode.appendChild(header);
+
+            // CHILDREN (séances)
+            const childrenM = document.createElement('div');
+            childrenM.className = 'children';
+
+            if (seances.length === 0) {
+                const empty = document.createElement('div');
+                empty.className = 'empty-module';
+                empty.textContent = 'Aucune séance. Cliquez sur "+" pour en ajouter.';
+                childrenM.appendChild(empty);
+            } else {
+                seances.forEach((seance, idx) => {
+                    const item = creerSeanceItem(seance, module.id, idx, trimestre);
+                    childrenM.appendChild(item);
+                });
+            }
+
+            // Bouton Ajouter une séance
+            const addSeanceBtn = document.createElement('button');
+            addSeanceBtn.className = 'add-seance-btn';
+            addSeanceBtn.innerHTML = '➕ Ajouter une séance';
+            addSeanceBtn.onclick = (e) => {
+                e.stopPropagation();
+                ajouterSeance(module.id, trimestre);
+            };
+            childrenM.appendChild(addSeanceBtn);
+
+            modNode.appendChild(childrenM);
+
+            return modNode;
+        }
+
+        // ============================================================
+        // CRÉER UN ÉLÉMENT SÉANCE
+        // ============================================================
+        function creerSeanceItem(seance, moduleId, idx, trimestre) {
+            const item = document.createElement('div');
+            item.className = 'seance-item';
+            item.dataset.seanceId = seance.id || '';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.className = 'name';
+            nameSpan.title = 'Double-clic pour renommer';
+
+            const numSpan = document.createElement('span');
+            numSpan.className = 'num';
+            numSpan.textContent = `${idx + 1}.`;
+            nameSpan.appendChild(numSpan);
+
+            const textSpan = document.createElement('span');
+            textSpan.textContent = seance.titre || 'Sans titre';
+            nameSpan.appendChild(textSpan);
+
+            if (seance.indicative) {
+                const badge = document.createElement('span');
+                badge.className = 'badge-indicative';
+                badge.textContent = 'indicative';
+                nameSpan.appendChild(badge);
+            }
+
+            if (seance.leconBrute) {
+                const badge = document.createElement('span');
+                badge.className = 'badge-lecon';
+                badge.textContent = '📄';
+                nameSpan.appendChild(badge);
+            }
+
+            if (seance.titreLecon) {
+                const tl = document.createElement('span');
+                tl.className = 'titre-lecon';
+                tl.textContent = `(${seance.titreLecon})`;
+                nameSpan.appendChild(tl);
+            }
+
+            nameSpan.ondblclick = (e) => {
+                e.stopPropagation();
+                renommerSeance(moduleId, seance.id, trimestre);
+            };
+
+            const actions = document.createElement('div');
+            actions.className = 'actions';
+
+            // Bouton Éditer
+            const btnEdit = document.createElement('button');
+            btnEdit.className = 'btn-edit';
+            btnEdit.innerHTML = '✏️';
+            btnEdit.title = 'Éditer la séance';
+            btnEdit.onclick = (e) => {
+                e.stopPropagation();
+                editerSeance(moduleId, seance.id, trimestre);
+            };
+            actions.appendChild(btnEdit);
+
+            // Bouton Projeter
+            const btnProject = document.createElement('button');
+            btnProject.className = 'btn-project';
+            btnProject.innerHTML = '📽️';
+            btnProject.title = 'Projeter la séance';
+            btnProject.onclick = (e) => {
+                e.stopPropagation();
+                projeterSeance(moduleId, seance.id, trimestre);
+            };
+            actions.appendChild(btnProject);
+
+            // Bouton Déplacer vers le haut
+            const btnUp = document.createElement('button');
+            btnUp.className = 'btn-move';
+            btnUp.innerHTML = '⬆';
+            btnUp.title = 'Déplacer vers le haut';
+            btnUp.onclick = (e) => {
+                e.stopPropagation();
+                deplacerSeance(moduleId, seance.id, trimestre, -1);
+            };
+            actions.appendChild(btnUp);
+
+            // Bouton Déplacer vers le bas
+            const btnDown = document.createElement('button');
+            btnDown.className = 'btn-move';
+            btnDown.innerHTML = '⬇';
+            btnDown.title = 'Déplacer vers le bas';
+            btnDown.onclick = (e) => {
+                e.stopPropagation();
+                deplacerSeance(moduleId, seance.id, trimestre, 1);
+            };
+            actions.appendChild(btnDown);
+
+            // Bouton Supprimer
+            const btnDel = document.createElement('button');
+            btnDel.className = 'btn-del';
+            btnDel.innerHTML = '🗑️';
+            btnDel.title = 'Supprimer cette séance';
+            btnDel.onclick = (e) => {
+                e.stopPropagation();
+                supprimerSeance(moduleId, seance.id, trimestre);
+            };
+            actions.appendChild(btnDel);
+
+            item.appendChild(nameSpan);
+            item.appendChild(actions);
+
+            return item;
+        }
+
+        // ============================================================
+        // TOGGLE TRIMESTRE / MODULE
+        // ============================================================
+        function toggleTrimestre(node) {
+            const children = node.querySelector('.children');
+            const arrow = node.querySelector('.arrow');
+            if (children) {
+                children.classList.toggle('open');
+                if (arrow) arrow.classList.toggle('open');
+            }
+        }
+
+        function toggleModule(node) {
+            const children = node.querySelector('.children');
+            const arrow = node.querySelector('.arrow');
+            if (children) {
+                children.classList.toggle('open');
+                if (arrow) arrow.classList.toggle('open');
+            }
+        }
+
+        // ============================================================
+        // OUVERTURE PAR DÉFAUT
+        // ============================================================
+        function ouvrirTout() {
+            document.querySelectorAll('.trimestre-node .children, .module-node .children').forEach(el => {
+                el.classList.add('open');
+            });
+            document.querySelectorAll('.trimestre-node .arrow, .module-node .arrow').forEach(el => {
+                el.classList.add('open');
+            });
+        }
+
+        // ============================================================
+        // GESTION DES MODULES
+        // ============================================================
+        function getModules() {
+            return dataCache[niveauActuel].modules || [];
+        }
+
+        function getModule(id) {
+            return getModules().find(m => m.id === id);
+        }
+
+        function getModuleIndex(id) {
+            return getModules().findIndex(m => m.id === id);
+        }
+
+        function getSeancesModule(moduleId) {
+            const mod = getModule(moduleId);
+            return mod ? mod.seances || [] : [];
+        }
+
+        function getSeance(moduleId, seanceId) {
+            const seances = getSeancesModule(moduleId);
+            return seances.find(s => s.id === seanceId);
+        }
+
+        function getSeanceIndex(moduleId, seanceId) {
+            const seances = getSeancesModule(moduleId);
+            return seances.findIndex(s => s.id === seanceId);
+        }
+
+        function ajouterModule(trimestre) {
+            const modules = getModules();
+            const titre = prompt('Nom du nouveau module :', `Module ${modules.filter(m => m.trimestre === trimestre).length + 1}`);
+            if (!titre || !titre.trim()) return;
+
+            const maxOrdre = modules
+                .filter(m => m.trimestre === trimestre)
+                .reduce((max, m) => Math.max(max, m.ordre || 0), -1);
+
+            const nouveauModule = {
+                id: genererId(),
+                trimestre: trimestre,
+                titre: titre.trim(),
+                ordre: maxOrdre + 1,
+                seances: []
+            };
+
+            modules.push(nouveauModule);
+            sauvegarder();
+            afficherArborescence();
+            afficherNiveaux();
+            updateSaveStatus('saved', `Module "${titre}" ajouté`);
+        }
+
+        function renommerModule(moduleId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+
+            // Créer un input inline
+            const header = document.querySelector(`.module-node[data-module-id="${moduleId}"] .module-title`);
+            if (!header) return;
+
+            const currentText = mod.titre || '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.className = 'editing';
+            input.style.width = Math.max(currentText.length * 8, 80) + 'px';
+
+            header.textContent = '';
+            header.appendChild(input);
+            header.classList.add('editing');
+
+            input.focus();
+            input.select();
+
+            const save = () => {
+                const newTitle = input.value.trim() || currentText || 'Module sans nom';
+                mod.titre = newTitle;
+                header.textContent = newTitle;
+                header.classList.remove('editing');
+                sauvegarder();
+                afficherNiveaux();
+                updateSaveStatus('saved', `Module renommé en "${newTitle}"`);
+            };
+
+            input.onblur = save;
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    input.value = currentText;
+                    input.blur();
+                }
+            };
+        }
+
+        function supprimerModule(moduleId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+
+            const nbSeances = (mod.seances || []).length;
+            const msg = nbSeances > 0 
+                ? `Supprimer le module "${mod.titre}" et ses ${nbSeances} séance(s) ?`
+                : `Supprimer le module "${mod.titre}" ?`;
+
+            if (!confirm(msg)) return;
+
+            const modules = getModules();
+            const idx = modules.findIndex(m => m.id === moduleId);
+            if (idx !== -1) {
+                modules.splice(idx, 1);
+                sauvegarder();
+                afficherArborescence();
+                afficherNiveaux();
+                updateSaveStatus('saved', `Module "${mod.titre}" supprimé`);
+            }
+        }
+
+        function deplacerModule(moduleId, trimestre, direction) {
+            const modules = getModules();
+            const idx = modules.findIndex(m => m.id === moduleId);
+            if (idx === -1) return;
+
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= modules.length) return;
+
+            // Échanger les ordres
+            const tempOrdre = modules[idx].ordre;
+            modules[idx].ordre = modules[newIdx].ordre;
+            modules[newIdx].ordre = tempOrdre;
+
+            // Échanger dans le tableau
+            [modules[idx], modules[newIdx]] = [modules[newIdx], modules[idx]];
+
+            // Trier par ordre
+            modules.sort((a, b) => (a.ordre || 0) - (b.ordre || 0));
+
+            sauvegarder();
+            afficherArborescence();
+            afficherNiveaux();
+            updateSaveStatus('saved', 'Module déplacé');
+        }
+
+        // ============================================================
+        // GESTION DES SÉANCES
+        // ============================================================
+        function ajouterSeance(moduleId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+
+            const titre = prompt('Titre de la nouvelle séance :', `Séance ${(mod.seances || []).length + 1}`);
+            if (!titre || !titre.trim()) return;
+
+            const nouvelleSeance = {
+                id: genererIdSeance(),
+                titre: titre.trim(),
+                contenu: '',
+                diaporama: [],
+                leconBrute: false,
+                titreLecon: '',
+                indicative: true
+            };
+
+            mod.seances.push(nouvelleSeance);
+            sauvegarder();
+            afficherArborescence();
+            updateSaveStatus('saved', `Séance "${titre}" ajoutée`);
+        }
+
+        function renommerSeance(moduleId, seanceId, trimestre) {
+            const seance = getSeance(moduleId, seanceId);
+            if (!seance) return;
+
+            // Trouver l'élément dans le DOM
+            const items = document.querySelectorAll('.seance-item');
+            let targetItem = null;
+            items.forEach(item => {
+                if (item.dataset.seanceId === seanceId) {
+                    targetItem = item;
+                }
+            });
+            if (!targetItem) return;
+
+            const nameSpan = targetItem.querySelector('.name');
+            if (!nameSpan) return;
+
+            // Trouver le span de texte (le titre)
+            const textSpans = nameSpan.querySelectorAll('span');
+            let titleSpan = null;
+            textSpans.forEach(span => {
+                if (!span.classList.contains('num') && 
+                    !span.classList.contains('badge-indicative') && 
+                    !span.classList.contains('badge-lecon') && 
+                    !span.classList.contains('titre-lecon')) {
+                    titleSpan = span;
+                }
+            });
+
+            if (!titleSpan) {
+                // Fallback: créer un span
+                titleSpan = document.createElement('span');
+                titleSpan.textContent = seance.titre || '';
+                nameSpan.appendChild(titleSpan);
+            }
+
+            const currentText = titleSpan.textContent;
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentText;
+            input.style.width = Math.max(currentText.length * 8, 80) + 'px';
+
+            nameSpan.classList.add('editing');
+            titleSpan.replaceWith(input);
+
+            input.focus();
+            input.select();
+
+            const save = () => {
+                const newTitle = input.value.trim() || currentText || 'Sans titre';
+                seance.titre = newTitle;
+                const newSpan = document.createElement('span');
+                newSpan.textContent = newTitle;
+                input.replaceWith(newSpan);
+                nameSpan.classList.remove('editing');
+                sauvegarder();
+                updateSaveStatus('saved', `Séance renommée en "${newTitle}"`);
+            };
+
+            input.onblur = save;
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    input.value = currentText;
+                    input.blur();
+                }
+            };
+        }
+
+        function supprimerSeance(moduleId, seanceId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+
+            const seance = getSeance(moduleId, seanceId);
+            if (!seance) return;
+
+            if (!confirm(`Supprimer la séance "${seance.titre || 'Sans titre'}" ?`)) return;
+
+            const idx = mod.seances.findIndex(s => s.id === seanceId);
+            if (idx !== -1) {
+                mod.seances.splice(idx, 1);
+                sauvegarder();
+                afficherArborescence();
+                updateSaveStatus('saved', `Séance "${seance.titre}" supprimée`);
+            }
+        }
+
+        function deplacerSeance(moduleId, seanceId, trimestre, direction) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+
+            const idx = mod.seances.findIndex(s => s.id === seanceId);
+            if (idx === -1) return;
+
+            const newIdx = idx + direction;
+            if (newIdx < 0 || newIdx >= mod.seances.length) return;
+
+            [mod.seances[idx], mod.seances[newIdx]] = [mod.seances[newIdx], mod.seances[idx]];
+
+            sauvegarder();
+            afficherArborescence();
+            updateSaveStatus('saved', 'Séance déplacée');
+        }
+
+        // ============================================================
+        // ACTIONS SUR SÉANCES (Éditer / Projeter)
+        // ============================================================
+        function editerSeance(moduleId, seanceId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+            const seance = getSeance(moduleId, seanceId);
+            if (!seance) return;
+
+            // Trouver l'index de la séance dans le module
+            const idx = mod.seances.findIndex(s => s.id === seanceId);
+            if (idx === -1) return;
+
+            const encodedNiveau = encodeURIComponent(niveauActuel);
+            const encodedTrimestre = encodeURIComponent(trimestre);
+            const encodedModule = encodeURIComponent(mod.titre || 'Module');
+            const url = `preparation/editeur.html?niveau=${encodedNiveau}&trimestre=${encodedTrimestre}&module=${encodedModule}&seance=${idx}`;
+            
+            console.log('🔗 Navigation vers:', url);
+            window.location.href = url;
+        }
+
+        function projeterSeance(moduleId, seanceId, trimestre) {
+            const mod = getModule(moduleId);
+            if (!mod) return;
+            const seance = getSeance(moduleId, seanceId);
+            if (!seance) return;
+
+            const idx = mod.seances.findIndex(s => s.id === seanceId);
+            if (idx === -1) return;
+
+            const encodedNiveau = encodeURIComponent(niveauActuel);
+            const encodedTrimestre = encodeURIComponent(trimestre);
+            const encodedModule = encodeURIComponent(mod.titre || 'Module');
+            const url = `presentation/diaporama.html?niveau=${encodedNiveau}&trimestre=${encodedTrimestre}&module=${encodedModule}&seance=${idx}`;
+            
+            console.log('🔗 Navigation vers:', url);
+            window.open(url, '_blank', 'width=1024,height=768');
+        }
+
+        // ============================================================
+        // AJOUT NIVEAU
+        // ============================================================
+        function ajouterNiveau() {
+            const nom = prompt('Nom du nouveau niveau :', `Niveau ${niveauxCours.length + 1}`);
+            if (nom && nom.trim()) {
+                const n = nom.trim();
+                if (niveauxCours.includes(n)) { alert('Ce niveau existe déjà.'); return; }
+                niveauxCours.push(n);
+                dataCache[n] = { modules: [] };
+                // Créer des modules vides par trimestre
+                TRIMESTRES.forEach((trimestre, tIdx) => {
+                    dataCache[n].modules.push({
+                        id: genererId(),
+                        trimestre: trimestre,
+                        titre: `Module ${tIdx + 1}`,
+                        ordre: tIdx,
+                        seances: []
+                    });
+                });
+                sauvegarder();
+                afficherNiveaux();
+                selectionnerNiveau(n);
+                updateSaveStatus('saved', `Niveau "${n}" ajouté`);
+            }
+        }
+
+        // ============================================================
+        // SAUVEGARDE
+        // ============================================================
+        async function sauvegarder() {
+            updateSaveStatus('saving', 'Sauvegarde...');
+            const payload = { niveaux: niveauxCours, cours: dataCache };
+            const result = await API.save('all_cours', payload);
+            if (result) {
+                updateSaveStatus('saved', 'Sauvegardé');
+            } else {
+                updateSaveStatus('error', 'Erreur de sauvegarde');
+            }
+        }
+
+        function sauvegarderAuto() {
+            sauvegarder();
+        }
+
+        async function exporterToutesDonnees() {
+            await API.exporterToutesDonnees();
+        }
+
+        // ============================================================
+        // VERIFICATION AUTH
+        // ============================================================
+        function verifierAuthentification() {
+            if (!API._isAuthenticated()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (verifierAuthentification()) {
+            chargerDonnees().then(() => {
+                // Ouvrir tout par défaut
+                setTimeout(ouvrirTout, 300);
+            });
+        }
+    </script>
+</body>
+</html>

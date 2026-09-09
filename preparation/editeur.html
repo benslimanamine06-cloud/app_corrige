@@ -1,0 +1,1825 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Éditeur de diaporama</title>
+    <script src="../api.js"></script>
+    <script src="../triggers.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+        .app {
+            display: flex;
+            height: 100vh;
+            background: #f0f2f5;
+        }
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar-header {
+            padding: 16px 18px 12px;
+            border-bottom: 1px solid #e9ecef;
+            flex-shrink: 0;
+        }
+        .sidebar-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar-header h3 span {
+            background: #e9ecef;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        .sidebar-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 10px;
+        }
+        .sidebar-list .slide-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 3px;
+            border: 2px solid transparent;
+            position: relative;
+        }
+        .sidebar-list .slide-item:hover { background: #f8f9fa; }
+        .sidebar-list .slide-item.active { background: #e7f3ff; border-color: #6f42c1; }
+        .sidebar-list .slide-item .num {
+            font-weight: 700;
+            color: #6c757d;
+            font-size: 13px;
+            min-width: 28px;
+            text-align: center;
+        }
+        .sidebar-list .slide-item.active .num { color: #6f42c1; }
+        .sidebar-list .slide-item .preview {
+            flex: 1;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #495057;
+        }
+        .sidebar-list .slide-item.active .preview { color: #1a1a2e; font-weight: 500; }
+        .sidebar-list .slide-item .badge-diapo {
+            font-size: 10px;
+            background: #dee2e6;
+            color: #6c757d;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .sidebar-list .slide-item.active .badge-diapo { background: #6f42c1; color: white; }
+        .sidebar-list .slide-item .del-slide {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0 4px;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+        .sidebar-list .slide-item:hover .del-slide,
+        .sidebar-list .slide-item:focus-within .del-slide { opacity: 1; }
+        .sidebar-actions {
+            padding: 10px 12px 14px;
+            border-top: 1px solid #e9ecef;
+            flex-shrink: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .sidebar-actions button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: inherit;
+        }
+        .sidebar-actions .btn-add { background: #6f42c1; color: white; }
+        .sidebar-actions .btn-add:hover { background: #5a32a3; }
+        .sidebar-actions .btn-duplicate { background: #e9ecef; color: #495057; }
+        .sidebar-actions .btn-duplicate:hover { background: #dee2e6; }
+        .sidebar-actions .btn-move { background: transparent; color: #6c757d; padding: 8px 10px; }
+        .sidebar-actions .btn-move:hover { background: #f8f9fa; }
+        .sidebar-actions .btn-delete { background: transparent; color: #dc3545; padding: 8px 10px; }
+        .sidebar-actions .btn-delete:hover { background: #f8f9fa; }
+        .sidebar-actions .btn-reload {
+            background: #fd7e14;
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .sidebar-actions .btn-reload:hover { background: #e8590c; }
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1001;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .sidebar-overlay.active { display: block; }
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .toolbar-top {
+            background: #ffffff;
+            padding: 8px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .toolbar-top .left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .toolbar-top .left .lecon-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .toolbar-top .left .lecon-title small {
+            font-weight: 400;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        .toolbar-top .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toolbar-top .right button {
+            padding: 7px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .toolbar-top .right .btn-save { background: #28a745; color: white; }
+        .toolbar-top .right .btn-save:hover { background: #218838; }
+        .toolbar-top .right .btn-present { background: #6f42c1; color: white; }
+        .toolbar-top .right .btn-present:hover { background: #5a32a3; }
+        .toolbar-top .right .btn-back { background: transparent; color: #6c757d; }
+        .toolbar-top .right .btn-back:hover { background: #f8f9fa; }
+        .toolbar-top .right .btn-force-reload {
+            background: #dc3545;
+            color: white;
+        }
+        .toolbar-top .right .btn-force-reload:hover { background: #c82333; }
+        .toolbar-format {
+            background: #f8f9fa;
+            padding: 6px 16px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .toolbar-format .group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding-right: 10px;
+            border-right: 1px solid #dee2e6;
+            margin-right: 6px;
+        }
+        .toolbar-format .group:last-child { border-right: none; margin-right: 0; }
+        .toolbar-format select, .toolbar-format input[type="number"] {
+            padding: 4px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+            font-family: inherit;
+            height: 32px;
+        }
+        .toolbar-format input[type="color"] {
+            width: 32px;
+            height: 32px;
+            padding: 2px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+        }
+        .toolbar-format .btn-format {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 4px 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            height: 32px;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+        }
+        .toolbar-format .btn-format:hover { background: #e9ecef; }
+        .toolbar-format .btn-format.active { background: #6f42c1; color: white; border-color: #6f42c1; }
+        .toolbar-format .btn-format.align-active { background: #e7f3ff; border-color: #6f42c1; color: #6f42c1; }
+        .toolbar-format .btn-tool {
+            background: #e9ecef;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            height: 32px;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .toolbar-format .btn-tool:hover { background: #dee2e6; }
+        .toolbar-format .btn-tool.trigger { background: #6f42c1; color: white; }
+        .toolbar-format .btn-tool.trigger:hover { background: #5a32a3; }
+        .editor-area {
+            flex: 1;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            position: relative;
+        }
+        .slide-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            flex-shrink: 0;
+        }
+        .slide-nav .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .slide-nav .nav-controls button {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            font-family: inherit;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .slide-nav .nav-controls button:hover { background: #e9ecef; }
+        .slide-nav .nav-controls .counter {
+            font-size: 14px;
+            font-weight: 500;
+            color: #495057;
+            min-width: 60px;
+            text-align: center;
+        }
+        .slide-nav .nav-controls .dots {
+            display: flex;
+            gap: 6px;
+            margin: 0 12px;
+        }
+        .slide-nav .nav-controls .dots .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #dee2e6;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .slide-nav .nav-controls .dots .dot.active { background: #6f42c1; transform: scale(1.2); }
+        .slide-nav .nav-controls .dots .dot.has-content { background: #28a745; }
+        .slide-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        .slide-nav .nav-right .rep-counter { font-weight: 500; color: #6f42c1; }
+        .slide-nav .nav-right .btn-reponse {
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            height: 34px;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        .slide-nav .nav-right .btn-reponse:hover { background: #218838; }
+        .slide-nav .nav-right .btn-reponse.gris { background: #6c757d; cursor: not-allowed; }
+        .content-editable-wrapper {
+            flex: 1;
+            overflow: auto;
+            padding: 30px 40px;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .content-editable {
+            width: 100%;
+            max-width: 1000px;
+            min-height: 100%;
+            outline: none;
+            font-size: 28px;
+            line-height: 1.8;
+            color: #1a1a2e;
+            padding: 20px;
+            border: 2px dashed transparent;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .content-editable:focus { border-color: #6f42c1; background: #fafbfc; }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-trigger {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .modal-trigger h2 { margin-top: 0; font-size: 22px; color: #2c3e50; }
+        .modal-trigger label {
+            display: block;
+            font-weight: 600;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #495057;
+        }
+        .modal-trigger input[type="text"], .modal-trigger textarea, .modal-trigger select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .modal-trigger textarea { min-height: 80px; resize: vertical; }
+        .modal-trigger .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .modal-trigger .btn-row button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: inherit;
+            flex: 1;
+            min-height: 44px;
+        }
+        .modal-trigger .btn-row .btn-confirm { background: #6f42c1; color: white; }
+        .modal-trigger .btn-row .btn-confirm:hover { background: #5a32a3; }
+        .modal-trigger .btn-row .btn-save-triggers { background: #28a745; color: white; }
+        .modal-trigger .btn-row .btn-save-triggers:hover { background: #218838; }
+        .modal-trigger .btn-row .btn-cancel-modal { background: #6c757d; color: white; }
+        .modal-trigger .btn-row .btn-cancel-modal:hover { background: #5a6268; }
+        .modal-trigger .list-triggers {
+            margin-top: 15px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .modal-trigger .list-triggers .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            border-left: 3px solid #6f42c1;
+        }
+        .modal-trigger .list-triggers .item .text { flex: 1; font-size: 14px; }
+        .modal-trigger .list-triggers .item .text .badge-bonne {
+            background: #28a745; color: white; font-size: 10px; border-radius: 10px; padding: 0 6px; margin-left: 4px;
+        }
+        .modal-trigger .list-triggers .item .text .badge-question {
+            background: #6f42c1; color: white; font-size: 10px; border-radius: 10px; padding: 0 6px; margin-left: 4px;
+        }
+        .modal-trigger .list-triggers .item .actions button {
+            background: none; border: none; cursor: pointer; font-size: 16px; padding: 0 4px;
+        }
+        .modal-trigger .list-triggers .item .actions .edit-btn { color: #fd7e14; }
+        .modal-trigger .list-triggers .item .actions .edit-btn:hover { color: #e8590c; }
+        .modal-trigger .list-triggers .item .actions .del-btn { color: #dc3545; }
+        .modal-trigger .list-triggers .item .actions .del-btn:hover { color: #c82333; }
+        .modal-trigger .list-triggers .empty { color: #999; font-style: italic; text-align: center; padding: 10px; }
+        .modal-trigger .style-group {
+            margin-top: 15px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 15px;
+        }
+        .modal-trigger .style-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        .modal-trigger .style-row .field { flex: 1; min-width: 80px; }
+        .modal-trigger .style-row .field label { font-size: 12px; margin-top: 0; font-weight: 400; }
+        .modal-trigger .style-row .field input[type="color"] { width: 100%; height: 36px; padding: 2px; cursor: pointer; border: 1px solid #ced4da; border-radius: 4px; }
+        .modal-trigger .style-row .field input[type="number"] { width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; }
+        .modal-trigger .style-row .field select { width: 100%; padding: 6px 8px; border: 1px solid #ced4da; border-radius: 4px; font-size: 13px; }
+        .modal-trigger .style-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 8px;
+        }
+        .modal-trigger .style-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 400;
+        }
+        .modal-trigger .btn-qcm {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        .modal-trigger .btn-qcm:hover { background: #138496; }
+        .modal-trigger .btn-qcm.active { background: #28a745; }
+        .modal-trigger .btn-qcm.active:hover { background: #218838; }
+        .modal-trigger .bonne-group { display: none; margin-top: 10px; }
+        .modal-trigger .bonne-group.visible { display: block; }
+        .modal-trigger .btn-question {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            font-family: inherit;
+            transition: background 0.2s;
+        }
+        .modal-trigger .btn-question:hover { background: #5a32a3; }
+        .modal-trigger .btn-question.active { background: #28a745; }
+        .modal-trigger .btn-question.active:hover { background: #218838; }
+        .save-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 13px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.6;
+            transition: all 0.3s;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .save-status.saving { opacity: 1; background: #6f42c1; }
+        .save-status.saved { opacity: 1; background: #28a745; }
+        .save-status.error { opacity: 1; background: #dc3545; }
+        @media (max-width: 1024px) {
+            .sidebar { width: 220px; min-width: 220px; }
+            .content-editable { font-size: 24px; padding: 16px; }
+            .content-editable-wrapper { padding: 20px; }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .main-area { padding-top: 0; }
+            .toolbar-format { flex-wrap: wrap; gap: 6px; padding: 8px 12px; }
+            .toolbar-format .group { border-right: none; padding-right: 0; margin-right: 0; }
+            .content-editable { font-size: 20px; padding: 12px; }
+            .content-editable-wrapper { padding: 12px; padding-top: 60px; }
+            .slide-nav { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+            .slide-nav .nav-right { width: 100%; justify-content: space-between; }
+            .toolbar-top { padding: 8px 12px; }
+            .toolbar-top .left .lecon-title { font-size: 14px; }
+            .save-status { bottom: 10px; right: 10px; font-size: 11px; padding: 6px 12px; }
+        }
+        @media (max-width: 480px) {
+            .sidebar { width: 260px; }
+            .content-editable { font-size: 18px; padding: 10px; }
+            .content-editable-wrapper { padding: 8px; padding-top: 60px; }
+            .modal-trigger { padding: 16px; margin: 10px; }
+            .toolbar-top .right button { font-size: 12px; padding: 5px 10px; }
+            .slide-nav .nav-controls .dots { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="app">
+
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3>📋 Diapositives <span id="slideCount">0</span></h3>
+            </div>
+            <div class="sidebar-list" id="slideList"></div>
+            <div class="sidebar-actions">
+                <button class="btn-add" onclick="ajouterDiapositive()">➕ Ajouter</button>
+                <button class="btn-duplicate" onclick="dupliquerDiapositive()">📋 Dupliquer</button>
+                <button class="btn-move" onclick="deplacerDiapositive(-1)">⬆</button>
+                <button class="btn-move" onclick="deplacerDiapositive(1)">⬇</button>
+                <button class="btn-delete" onclick="supprimerDiapositive()">🗑️</button>
+                <button class="btn-reload" onclick="forcerRechargement()" title="Forcer le rechargement">🔄</button>
+            </div>
+        </div>
+
+        <div class="main-area">
+
+            <div class="toolbar-top">
+                <div class="left">
+                    <span class="lecon-title">
+                        ✏️ Éditeur de diaporama
+                        <small id="infoSeance">Chargement...</small>
+                    </span>
+                </div>
+                <div class="right">
+                    <button class="btn-save" onclick="sauvegarder()">💾 Sauvegarder</button>
+                    <button class="btn-present" onclick="modePresentation()">📽️ Présentation</button>
+                    <button class="btn-force-reload" onclick="forcerRechargement()" title="Forcer le rechargement en cas de blocage">🔄 Forcer</button>
+                    <button class="btn-back" onclick="retour()">← Retour</button>
+                </div>
+            </div>
+
+            <div class="toolbar-format" id="toolbarFormat">
+                <div class="group">
+                    <select id="fontFamily" onchange="appliquerFormat()">
+                        <option value="Arial">Arial</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Verdana">Verdana</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                        <option value="Segoe UI">Segoe UI</option>
+                    </select>
+                </div>
+                <div class="group">
+                    <input type="number" id="fontSize" value="28" min="8" max="72" onchange="appliquerFormat()" style="width:60px;">
+                </div>
+                <div class="group">
+                    <input type="color" id="fontColor" value="#1a1a2e" onchange="appliquerFormat()">
+                </div>
+                <div class="group">
+                    <button class="btn-format" id="btnBold" onclick="toggleFormat('bold')"><b>B</b></button>
+                    <button class="btn-format" id="btnItalic" onclick="toggleFormat('italic')"><i>I</i></button>
+                    <button class="btn-format" id="btnUnderline" onclick="toggleFormat('underline')"><u>U</u></button>
+                    <button class="btn-format" id="btnStrike" onclick="toggleFormat('strikeThrough')"><s>S</s></button>
+                </div>
+                <div class="group">
+                    <button class="btn-format align-btn" data-align="left" onclick="setAlign('left')">⬅️</button>
+                    <button class="btn-format align-btn" data-align="center" onclick="setAlign('center')">⬛</button>
+                    <button class="btn-format align-btn" data-align="right" onclick="setAlign('right')">➡️</button>
+                    <button class="btn-format align-btn" data-align="justify" onclick="setAlign('justify')">⬛⬛</button>
+                </div>
+                <div class="group">
+                    <button class="btn-tool" onclick="insererTableau()">📊</button>
+                    <button class="btn-tool" onclick="insererImage()">🖼️</button>
+                    <button class="btn-tool" onclick="ajouterRessource()">🔗</button>
+                    <button class="btn-tool trigger" onclick="ajouterDeclencheur()">🔗 Déclencheur</button>
+                    <button class="btn-tool" onclick="undo()" title="Annuler (Ctrl+Z)">↩️</button>
+                    <button class="btn-tool" onclick="redo()" title="Rétablir (Ctrl+Y)">↪️</button>
+                </div>
+                <div class="group">
+                    <button class="btn-format" onclick="toggleModeNuit()" id="btnNuit">🌙</button>
+                    <button class="btn-format" onclick="toggleFullscreen()">⛶</button>
+                </div>
+            </div>
+
+            <div class="editor-area">
+
+                <div class="slide-nav">
+                    <div class="nav-controls">
+                        <button onclick="diapoPrecedent()">◀</button>
+                        <button onclick="diapoSuivant()">▶</button>
+                        <span class="counter" id="slideCounter">1 / 1</span>
+                        <div class="dots" id="dotsContainer"></div>
+                    </div>
+                    <div class="nav-right">
+                        <span>📖 <span id="titreLeconAffichage"></span></span>
+                        <span class="rep-counter" id="repCounter">0 / 0</span>
+                        <button class="btn-reponse" id="btnReponse" onclick="revelerReponse()">💡 Réponse</button>
+                    </div>
+                </div>
+
+                <div class="content-editable-wrapper">
+                    <div class="content-editable" id="contentEditable" contenteditable="true">
+                        Cliquez ici pour modifier...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-status" id="saveStatus">
+        <span id="saveIcon">💾</span>
+        <span id="saveText">Sauvegardé</span>
+    </div>
+
+    <div class="modal-overlay" id="modalDeclencheur">
+        <div class="modal-trigger">
+            <h2>🔗 Gérer les déclencheurs</h2>
+            <p style="color: #6c757d; font-size: 14px;">Ajoutez plusieurs déclencheurs pour la même question.</p>
+
+            <label>📝 Texte déclencheur</label>
+            <input type="text" id="triggerTexte" placeholder="La question qui sera cliquable...">
+
+            <label>🔧 Type</label>
+            <select id="triggerType">
+                <option value="reponse">📝 Réponse (texte)</option>
+                <option value="image">🖼️ Image</option>
+                <option value="lien">🔗 Lien externe</option>
+                <option value="video">🎬 Vidéo (URL)</option>
+                <option value="texte">📄 Texte complémentaire</option>
+            </select>
+
+            <label>📝 Contenu</label>
+            <textarea id="triggerContenu" placeholder="Saisissez la réponse à afficher..." rows="2"></textarea>
+
+            <label>🎨 Style d'affichage</label>
+            <select id="triggerStyle">
+                <option value="popup">💬 Pop-up (fenêtre modale)</option>
+                <option value="inline">📄 Remplacer le texte</option>
+                <option value="bottom">⬇️ Afficher en bas</option>
+            </select>
+
+            <div class="style-group">
+                <label>🎨 Style du déclencheur</label>
+                <div class="style-row">
+                    <div class="field">
+                        <label>Couleur</label>
+                        <input type="color" id="tColor" value="#007bff">
+                    </div>
+                    <div class="field">
+                        <label>Taille</label>
+                        <input type="number" id="tSize" value="18" min="10" max="48">
+                    </div>
+                    <div class="field">
+                        <label>Police</label>
+                        <select id="tFont">
+                            <option value="">Défaut</option>
+                            <option value="Arial">Arial</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Verdana">Verdana</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="style-checkboxes">
+                    <label><input type="checkbox" id="tBold"> <b>Gras</b></label>
+                    <label><input type="checkbox" id="tItalic"> <i>Italique</i></label>
+                    <label><input type="checkbox" id="tUnderline"> <u>Souligné</u></label>
+                </div>
+            </div>
+
+            <div style="margin: 10px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-qcm" id="btnQCM" onclick="basculerQCM()">📋 Mode QCM</button>
+                <span style="font-size: 13px; color: #6c757d;">(active l'option "Bonne réponse")</span>
+            </div>
+
+            <div style="margin: 10px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-question" id="btnQuestion" onclick="basculerQuestion()">
+                    ❓ Définir comme Question
+                </button>
+                <span style="font-size: 13px; color: #6c757d;">(ce déclencheur sera la question)</span>
+            </div>
+
+            <div class="bonne-group" id="bonneGroup">
+                <label>✅ Bonne réponse</label>
+                <select id="triggerBonne">
+                    <option value="false">❌ Non</option>
+                    <option value="true">✅ Oui</option>
+                </select>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-confirm" id="btnAjouterModifier" onclick="ajouterDeclencheurListe()">✅ Ajouter</button>
+                <button class="btn-save-triggers" onclick="sauvegarderDeclencheurs()">💾 Sauvegarder</button>
+                <button class="btn-cancel-modal" onclick="fermerModalDeclencheur()">❌ Fermer</button>
+            </div>
+
+            <div class="list-triggers" id="listTriggers">
+                <div class="empty">Aucun déclencheur pour cette question.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const niveau = urlParams.get('niveau') || localStorage.getItem('niveauActuelCours') || 'Non défini';
+        const trimestre = urlParams.get('trimestre') || localStorage.getItem('trimestreActuel') || 'Non défini';
+        const moduleNom = urlParams.get('module') || 'Non défini';
+        const seanceIndexParsed = parseInt(urlParams.get('seance'), 10);
+        const seanceIndex = isNaN(seanceIndexParsed) ? 0 : seanceIndexParsed;
+
+        // ============================================================
+        // ÉTAT - NOUVELLE STRUCTURE
+        // ============================================================
+        let donneesCompletes = null;  // Toutes les données all_cours
+        let moduleTrouve = null;      // Le module correspondant
+        let listeSeances = [];        // Les séances du module
+        let diapositives = [];
+        let indexActuel = 0;
+        let savedRange = null;
+        let listeDeclencheurs = [];
+        let indexModification = -1;
+        let modeQCM = false;
+        let estQuestion = false;
+        let elementOrigine = null;
+        let titreLecon = '';
+        let modeNuit = false;
+        let alignementActuel = 'center';
+        let modeQCMPersistant = false;
+        let historique = [];
+        let indexHistorique = -1;
+        const MAX_HISTORIQUE = 30;
+
+        Triggers.injectStyles('.content-editable-wrapper');
+
+        function forcerRechargement() {
+            if (confirm('⚠️ Forcer le rechargement ?\n\nVos modifications non sauvegardées seront perdues.')) {
+                window.location.reload(true);
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('menuToggle');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        });
+
+        function updateSaveStatus(status, message) {
+            const el = document.getElementById('saveStatus');
+            const icon = document.getElementById('saveIcon');
+            const text = document.getElementById('saveText');
+            
+            el.className = 'save-status';
+            if (status === 'saving') {
+                el.classList.add('saving');
+                icon.textContent = '⏳';
+                text.textContent = message || 'Sauvegarde...';
+            } else if (status === 'saved') {
+                el.classList.add('saved');
+                icon.textContent = '✅';
+                text.textContent = message || `Sauvegardé à ${new Date().toLocaleTimeString()}`;
+                setTimeout(() => { el.style.opacity = '0.6'; }, 3000);
+            } else if (status === 'error') {
+                el.classList.add('error');
+                icon.textContent = '❌';
+                text.textContent = message || 'Erreur';
+                setTimeout(() => { el.style.opacity = '0.6'; }, 5000);
+            }
+        }
+
+        function sauvegarderHistorique() {
+            const contenu = document.getElementById('contentEditable').innerHTML;
+            if (historique.length > 0 && historique[indexHistorique] === contenu) return;
+            
+            historique = historique.slice(0, indexHistorique + 1);
+            historique.push(contenu);
+            indexHistorique = historique.length - 1;
+            if (historique.length > MAX_HISTORIQUE) {
+                historique.shift();
+                indexHistorique--;
+            }
+        }
+
+        function undo() {
+            if (indexHistorique > 0) {
+                indexHistorique--;
+                document.getElementById('contentEditable').innerHTML = historique[indexHistorique];
+                updateSaveStatus('saved', 'Annulé');
+            }
+        }
+
+        function redo() {
+            if (indexHistorique < historique.length - 1) {
+                indexHistorique++;
+                document.getElementById('contentEditable').innerHTML = historique[indexHistorique];
+                updateSaveStatus('saved', 'Rétabli');
+            }
+        }
+
+        document.getElementById('contentEditable').addEventListener('input', sauvegarderHistorique);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'z') {
+                e.preventDefault();
+                undo();
+            }
+            if (e.ctrlKey && e.key === 'y') {
+                e.preventDefault();
+                redo();
+            }
+        });
+
+        // ============================================================
+        // CHARGEMENT - NOUVELLE MÉTHODE
+        // ============================================================
+        async function chargerDonnees() {
+            updateSaveStatus('saving', 'Chargement...');
+            
+            try {
+                const response = await fetch('/load', { headers: API._getHeaders() });
+                if (response.status === 401) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Récupérer all_cours
+                    const allCours = data.all_cours || { cours: {}, niveaux: [] };
+                    donneesCompletes = allCours;
+                    
+                    // Trouver le niveau
+                    const coursNiveau = allCours.cours?.[niveau];
+                    if (!coursNiveau) {
+                        alert(`⚠️ Niveau "${niveau}" non trouvé.`);
+                        window.location.href = '../dashboard_cours.html';
+                        return;
+                    }
+                    
+                    // Trouver le module par son titre et son trimestre
+                    const modules = coursNiveau.modules || [];
+                    moduleTrouve = modules.find(m => 
+                        m.trimestre === trimestre && m.titre === moduleNom
+                    );
+                    
+                    if (!moduleTrouve) {
+                        alert(`⚠️ Module "${moduleNom}" non trouvé dans "${trimestre}".`);
+                        window.location.href = '../dashboard_cours.html';
+                        return;
+                    }
+                    
+                    // Récupérer les séances
+                    listeSeances = moduleTrouve.seances || [];
+                    
+                    if (listeSeances.length === 0) {
+                        // Créer une séance par défaut
+                        listeSeances = [{
+                            id: 's_' + Date.now(),
+                            titre: 'Leçon sans titre',
+                            contenu: '',
+                            leconBrute: false,
+                            diaporama: [],
+                            titreLecon: '',
+                            indicative: true
+                        }];
+                        moduleTrouve.seances = listeSeances;
+                    }
+                } else {
+                    alert('⚠️ Erreur de chargement des données.');
+                    window.location.href = '../dashboard_cours.html';
+                    return;
+                }
+            } catch (e) {
+                console.error("Erreur de chargement :", e);
+                alert('❌ Erreur de chargement.');
+                window.location.href = '../dashboard_cours.html';
+                return;
+            }
+
+            if (seanceIndex < listeSeances.length) {
+                document.getElementById('infoSeance').innerText = `Séance : ${listeSeances[seanceIndex].titre}`;
+                diapositives = listeSeances[seanceIndex].diaporama || [];
+                titreLecon = listeSeances[seanceIndex].titreLecon || '';
+                document.getElementById('titreLeconAffichage').innerText = titreLecon || 'Sans titre';
+
+                if (diapositives.length === 0) {
+                    diapositives = [{ contenu: "Cliquez ici pour modifier...", alignement: 'center' }];
+                }
+
+                if (diapositives[0] && diapositives[0].alignement) {
+                    alignementActuel = diapositives[0].alignement;
+                }
+
+                indexActuel = 0;
+                afficherSidebar();
+                afficherDiapositive(indexActuel);
+                attacherDoubleClic();
+                mettreAJourAlignement();
+                sauvegarderHistorique();
+                setInterval(sauvegarderAuto, 30000);
+                updateSaveStatus('saved', 'Données chargées');
+            } else {
+                alert('⚠️ Séance introuvable.');
+                window.location.href = '../dashboard_cours.html';
+            }
+        }
+
+        function afficherSidebar() {
+            const list = document.getElementById('slideList');
+            list.innerHTML = '';
+            document.getElementById('slideCount').innerText = diapositives.length;
+
+            diapositives.forEach((diapo, idx) => {
+                const div = document.createElement('div');
+                div.className = 'slide-item' + (idx === indexActuel ? ' active' : '');
+                const preview = getPreviewFromContent(diapo.contenu);
+                const hasContent = diapo.contenu && diapo.contenu.length > 10 ? '●' : '○';
+                div.innerHTML = `
+                    <span class="num">${idx + 1}</span>
+                    <span class="preview">${preview || 'Vide'}</span>
+                    <span class="badge-diapo">${hasContent}</span>
+                    <button class="del-slide" onclick="supprimerDiapositive(${idx})" title="Supprimer">✕</button>
+                `;
+                div.addEventListener('click', () => {
+                    indexActuel = idx;
+                    afficherSidebar();
+                    afficherDiapositive(idx);
+                    attacherDoubleClic();
+                    mettreAJourAlignement();
+                });
+                list.appendChild(div);
+            });
+
+            document.getElementById('slideCounter').innerText = `${indexActuel + 1} / ${diapositives.length}`;
+            mettreAJourDots();
+        }
+
+        function getPreviewFromContent(contenu) {
+            if (!contenu) return 'Vide';
+            const plainText = contenu.replace(/<[^>]+>/g, '');
+            const questionMatch = contenu.match(/data-question="([^"]+)"/);
+            if (questionMatch) {
+                return questionMatch[1].substring(0, 35);
+            }
+            return plainText.substring(0, 35) || 'Vide';
+        }
+
+        // ============================================================
+        // Fonction afficherDiapositive
+        // ------------------------------------------------------------
+        // CORRECTIF (bug "diaporama compromis" / bouton Projeter) :
+        // L'ancienne version remplaçait ici, EN DUR dans le vrai DOM de
+        // #contentEditable, chaque .trigger-element[data-type="reponse"]
+        // par un <div class="trigger-wrapper"> contenant des
+        // <div class="trigger-question"> / <div class="trigger-reponse-content">.
+        // Comme la sauvegarde capture ensuite innerHTML de #contentEditable
+        // tel quel (voir plus bas : diapositives[idx].contenu = ...innerHTML),
+        // cette mutation était persistée en base : les vrais
+        // .trigger-element[data-type="question|reponse"] disparaissaient
+        // définitivement dès qu'une diapo était affichée puis resauvegardée.
+        // Résultat : Triggers.extraire() ne trouvait plus rien côté
+        // diaporama.html -> bouton "Réponse" caché, compteur cassé, QCM/
+        // corrigé non fonctionnels, badges disparus, etc.
+        //
+        // La mise en forme "question stylée + réponse toujours visible et
+        // indentée" est DÉJÀ assurée par le CSS de triggers.js via la
+        // classe .trigger-editor (ajoutée automatiquement par
+        // Triggers.injectStyles / Triggers.extraire sur les conteneurs
+        // d'édition) : voir les règles
+        // ".trigger-editor .trigger-element[data-type=\"question\"]" et
+        // ".trigger-editor .trigger-element[data-type=\"reponse\"]".
+        // Il suffit donc de ne PAS toucher au DOM ici.
+        // ============================================================
+        function afficherDiapositive(idx) {
+            if (idx < 0 || idx >= diapositives.length) return;
+            const editeur = document.getElementById('contentEditable');
+            editeur.innerHTML = diapositives[idx].contenu || 'Cliquez ici pour modifier...';
+
+            if (diapositives[idx].alignement) {
+                alignementActuel = diapositives[idx].alignement;
+            }
+            mettreAJourAlignement();
+
+            document.getElementById('slideCounter').innerText = `${idx + 1} / ${diapositives.length}`;
+            document.getElementById('slideCount').innerText = diapositives.length;
+
+            mettreAJourDots();
+
+            listeDeclencheurs = Triggers.extraire(editeur);
+
+            if (diapositives[idx].modeQCM !== undefined) {
+                modeQCMPersistant = diapositives[idx].modeQCM;
+                const groupe = editeur.querySelector('.trigger-group');
+                if (groupe) {
+                    if (modeQCMPersistant) {
+                        groupe.dataset.qcm = 'true';
+                    } else {
+                        groupe.dataset.qcm = 'false';
+                    }
+                }
+            }
+
+            const nbReponses = listeDeclencheurs.length;
+            const repCounter = document.getElementById('repCounter');
+            const btnReponse = document.getElementById('btnReponse');
+
+            if (nbReponses > 1) {
+                repCounter.innerText = `0 / ${nbReponses}`;
+                btnReponse.style.display = 'inline-block';
+                btnReponse.classList.remove('gris');
+                btnReponse.innerText = '💡 Réponse';
+            } else {
+                repCounter.innerText = '';
+                btnReponse.style.display = 'none';
+            }
+
+            attacherDoubleClic();
+            sauvegarderHistorique();
+        }
+
+        function mettreAJourDots() {
+            const container = document.getElementById('dotsContainer');
+            container.innerHTML = '';
+            diapositives.forEach((diapo, idx) => {
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                if (idx === indexActuel) dot.classList.add('active');
+                if (diapo.contenu && diapo.contenu.length > 10) dot.classList.add('has-content');
+                dot.onclick = () => {
+                    indexActuel = idx;
+                    afficherSidebar();
+                    afficherDiapositive(idx);
+                    attacherDoubleClic();
+                    mettreAJourAlignement();
+                };
+                container.appendChild(dot);
+            });
+        }
+
+        function mettreAJourAlignement() {
+            const editeur = document.getElementById('contentEditable');
+            editeur.style.textAlign = alignementActuel;
+
+            document.querySelectorAll('.align-btn').forEach(btn => {
+                btn.classList.toggle('align-active', btn.dataset.align === alignementActuel);
+            });
+
+            if (diapositives[indexActuel]) {
+                diapositives[indexActuel].alignement = alignementActuel;
+            }
+        }
+
+        function setAlign(align) {
+            alignementActuel = align;
+            mettreAJourAlignement();
+            sauvegarder();
+        }
+
+        function ajouterDiapositive() {
+            diapositives.push({ contenu: "Nouvelle diapositive", alignement: alignementActuel });
+            indexActuel = diapositives.length - 1;
+            afficherSidebar();
+            afficherDiapositive(indexActuel);
+            sauvegarder();
+            attacherDoubleClic();
+            mettreAJourAlignement();
+        }
+
+        function dupliquerDiapositive() {
+            if (diapositives.length === 0) return;
+            const contenu = diapositives[indexActuel].contenu || '';
+            const align = diapositives[indexActuel].alignement || 'center';
+            const modeQCM = diapositives[indexActuel].modeQCM || false;
+            diapositives.splice(indexActuel + 1, 0, { contenu: contenu, alignement: align, modeQCM: modeQCM });
+            indexActuel = indexActuel + 1;
+            afficherSidebar();
+            afficherDiapositive(indexActuel);
+            sauvegarder();
+            attacherDoubleClic();
+            mettreAJourAlignement();
+        }
+
+        function supprimerDiapositive(idx) {
+            if (diapositives.length <= 1) {
+                alert('⚠️ Il doit rester au moins une diapositive.');
+                return;
+            }
+            const index = (idx !== undefined) ? idx : indexActuel;
+            if (confirm(`Supprimer la diapositive ${index + 1} ?`)) {
+                diapositives.splice(index, 1);
+                if (indexActuel >= diapositives.length) indexActuel = diapositives.length - 1;
+                afficherSidebar();
+                afficherDiapositive(indexActuel);
+                sauvegarder();
+                attacherDoubleClic();
+                mettreAJourAlignement();
+            }
+        }
+
+        function deplacerDiapositive(direction) {
+            const newIndex = indexActuel + direction;
+            if (newIndex < 0 || newIndex >= diapositives.length) return;
+            [diapositives[indexActuel], diapositives[newIndex]] = [diapositives[newIndex], diapositives[indexActuel]];
+            indexActuel = newIndex;
+            afficherSidebar();
+            afficherDiapositive(indexActuel);
+            sauvegarder();
+            attacherDoubleClic();
+            mettreAJourAlignement();
+        }
+
+        function diapoSuivant() {
+            if (indexActuel < diapositives.length - 1) {
+                indexActuel++;
+                afficherSidebar();
+                afficherDiapositive(indexActuel);
+                attacherDoubleClic();
+                mettreAJourAlignement();
+            }
+        }
+
+        function diapoPrecedent() {
+            if (indexActuel > 0) {
+                indexActuel--;
+                afficherSidebar();
+                afficherDiapositive(indexActuel);
+                attacherDoubleClic();
+                mettreAJourAlignement();
+            }
+        }
+
+        function appliquerFormat() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) return;
+            const range = selection.getRangeAt(0);
+            const fontFamily = document.getElementById('fontFamily').value;
+            const fontSize = document.getElementById('fontSize').value;
+            const fontColor = document.getElementById('fontColor').value;
+            const span = document.createElement('span');
+            span.style.fontFamily = fontFamily;
+            span.style.fontSize = fontSize + 'px';
+            span.style.color = fontColor;
+            range.surroundContents(span);
+        }
+
+        function toggleFormat(format) {
+            document.execCommand(format, false, null);
+            const btn = document.getElementById('btn' + format.charAt(0).toUpperCase() + format.slice(1));
+            if (btn) btn.classList.toggle('active');
+        }
+
+        function insererTableau() {
+            const rows = prompt('Nombre de lignes ?', '3');
+            const cols = prompt('Nombre de colonnes ?', '3');
+            if (!rows || !cols) return;
+            let html = '<table style="border-collapse:collapse;width:100%;margin:10px 0;">';
+            for (let i = 0; i < parseInt(rows); i++) {
+                html += '<tr>';
+                for (let j = 0; j < parseInt(cols); j++) html += '<td style="border:1px solid #ccc;padding:8px;">&nbsp;</td>';
+                html += '</tr>';
+            }
+            html += '</table>';
+            document.execCommand('insertHTML', false, html);
+        }
+
+        function insererImage() {
+            const url = prompt('Entrez l\'URL de l\'image :');
+            if (url) document.execCommand('insertHTML', false, `<img src="${url}" style="max-width:100%;height:auto;border-radius:8px;margin:8px 0;">`);
+        }
+
+        function ajouterRessource() {
+            const url = prompt('Entrez l\'URL de la ressource :');
+            if (url) document.execCommand('insertHTML', false, `<a href="${url}" target="_blank" style="color:#6f42c1;">🔗 Ressource</a>`);
+        }
+
+        function toggleModeNuit() {
+            modeNuit = !modeNuit;
+            const body = document.body;
+            const btn = document.getElementById('btnNuit');
+            if (modeNuit) {
+                body.style.background = '#1a1a2e';
+                body.style.color = '#f0f0f0';
+                document.querySelector('.sidebar').style.background = '#2d2d44';
+                document.querySelector('.sidebar').style.color = '#f0f0f0';
+                document.querySelector('.sidebar-header').style.borderColor = '#3d3d5c';
+                document.querySelector('.toolbar-top').style.background = '#2d2d44';
+                document.querySelector('.toolbar-top').style.borderColor = '#3d3d5c';
+                document.querySelector('.toolbar-format').style.background = '#2d2d44';
+                document.querySelector('.toolbar-format').style.borderColor = '#3d3d5c';
+                document.querySelector('.content-editable-wrapper').style.background = '#1a1a2e';
+                document.querySelector('.content-editable').style.color = '#f0f0f0';
+                document.querySelector('.content-editable').style.background = '#1a1a2e';
+                document.querySelector('.slide-nav').style.background = '#2d2d44';
+                document.querySelector('.slide-nav').style.borderColor = '#3d3d5c';
+                btn.innerText = '☀️';
+            } else {
+                body.style.background = '#f0f2f5';
+                body.style.color = '#1a1a2e';
+                document.querySelector('.sidebar').style.background = '#ffffff';
+                document.querySelector('.sidebar').style.color = '#1a1a2e';
+                document.querySelector('.sidebar-header').style.borderColor = '#e9ecef';
+                document.querySelector('.toolbar-top').style.background = '#ffffff';
+                document.querySelector('.toolbar-top').style.borderColor = '#e9ecef';
+                document.querySelector('.toolbar-format').style.background = '#f8f9fa';
+                document.querySelector('.toolbar-format').style.borderColor = '#e9ecef';
+                document.querySelector('.content-editable-wrapper').style.background = '#ffffff';
+                document.querySelector('.content-editable').style.color = '#1a1a2e';
+                document.querySelector('.content-editable').style.background = '#ffffff';
+                document.querySelector('.slide-nav').style.background = '#f8f9fa';
+                document.querySelector('.slide-nav').style.borderColor = '#e9ecef';
+                btn.innerText = '🌙';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        function revelerReponse() {
+            const editeur = document.getElementById('contentEditable');
+            const total = Triggers.revelerReponses(editeur);
+            if (total > 0) {
+                document.getElementById('repCounter').innerText = `${total} / ${total}`;
+                const btnReponse = document.getElementById('btnReponse');
+                btnReponse.classList.add('gris');
+                btnReponse.innerText = '✅ Réponse';
+                btnReponse.style.cursor = 'default';
+            }
+        }
+
+        // ============================================================
+        // SAUVEGARDE - NOUVELLE MÉTHODE
+        // ============================================================
+        async function sauvegarder() {
+            if (diapositives.length > 0 && diapositives[indexActuel]) {
+                diapositives[indexActuel].contenu = document.getElementById('contentEditable').innerHTML;
+                diapositives[indexActuel].alignement = alignementActuel;
+                const groupe = document.getElementById('contentEditable').querySelector('.trigger-group');
+                diapositives[indexActuel].modeQCM = groupe && groupe.dataset.qcm === 'true';
+            }
+            
+            // Mettre à jour la séance dans le module
+            if (moduleTrouve && seanceIndex < moduleTrouve.seances.length) {
+                moduleTrouve.seances[seanceIndex].diaporama = diapositives;
+                moduleTrouve.seances[seanceIndex].titreLecon = titreLecon;
+            }
+
+            updateSaveStatus('saving', 'Sauvegarde...');
+
+            try {
+                // Sauvegarder toutes les données all_cours
+                const payload = { 
+                    niveaux: donneesCompletes.niveaux || [], 
+                    cours: donneesCompletes.cours || {} 
+                };
+                const succes = await API.save('all_cours', payload);
+                if (succes) {
+                    updateSaveStatus('saved', 'Sauvegardé');
+                } else {
+                    updateSaveStatus('error', 'Sauvegarde locale uniquement');
+                }
+            } catch (err) {
+                console.error('❌ Erreur de sauvegarde:', err);
+                updateSaveStatus('error', 'Erreur réseau');
+            }
+
+            attacherDoubleClic();
+        }
+
+        function sauvegarderAuto() {
+            sauvegarder();
+        }
+
+        function modePresentation() {
+            sauvegarder();
+
+            const encodedNiveau = encodeURIComponent(niveau);
+            const encodedTrimestre = encodeURIComponent(trimestre);
+            const encodedModule = encodeURIComponent(moduleNom);
+            window.open(
+                `../presentation/diaporama.html?niveau=${encodedNiveau}&trimestre=${encodedTrimestre}&module=${encodedModule}&seance=${seanceIndex}`,
+                '_blank',
+                'width=1024,height=768'
+            );
+        }
+
+        function retour() {
+            if (confirm('Voulez-vous quitter l\'éditeur ?')) {
+                sauvegarder();
+                window.location.href = '../dashboard_cours.html';
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                sauvegarder();
+            }
+            if (e.ctrlKey && e.key === 'ArrowRight') {
+                e.preventDefault();
+                diapoSuivant();
+            }
+            if (e.ctrlKey && e.key === 'ArrowLeft') {
+                e.preventDefault();
+                diapoPrecedent();
+            }
+            if (e.ctrlKey && e.key === 'd') {
+                e.preventDefault();
+                dupliquerDiapositive();
+            }
+            if (e.key === 'F5') {
+                e.preventDefault();
+                modePresentation();
+            }
+            if (e.key === 'Escape') {
+                fermerModalDeclencheur();
+            }
+        });
+
+        function attacherDoubleClic() {
+            const elements = document.querySelectorAll('#contentEditable .trigger-element');
+            elements.forEach(el => {
+                el.removeEventListener('dblclick', onDoubleClicDeclencheur);
+                el.addEventListener('dblclick', onDoubleClicDeclencheur);
+            });
+        }
+
+        function onDoubleClicDeclencheur(e) {
+            e.stopPropagation();
+            const el = e.currentTarget;
+            elementOrigine = el;
+
+            const parent = el.parentNode;
+            const estQCM = parent.dataset.qcm === 'true';
+
+            const tousLesDeclencheurs = parent.querySelectorAll('.trigger-element');
+            listeDeclencheurs = [];
+            tousLesDeclencheurs.forEach(item => {
+                const q = item.dataset.question || '';
+                const c = item.dataset.contenu || '';
+                const b = item.dataset.bonne === 'true';
+                const isQ = (item.dataset.type === 'question') || (item.dataset.isQuestion === 'true');
+                const st = {
+                    tColor: item.dataset.tColor || '#007bff',
+                    tSize: item.dataset.tSize || '18',
+                    tFont: item.dataset.tFont || '',
+                    tBold: item.dataset.tBold === 'true',
+                    tItalic: item.dataset.tItalic === 'true',
+                    tUnderline: item.dataset.tUnderline === 'true'
+                };
+                const type = item.dataset.type || 'reponse';
+                const style = item.dataset.style || 'popup';
+                listeDeclencheurs.push({
+                    texte: q,
+                    contenu: c,
+                    bonne: b,
+                    isQuestion: isQ,
+                    tStyle: st,
+                    type: type,
+                    style: style
+                });
+            });
+
+            if (el) {
+                const contenu = el.dataset.contenu || '';
+                const bonne = el.dataset.bonne === 'true';
+                const question = el.dataset.question || el.textContent.replace(/[💡🔗📋✅❌]/g, '').trim();
+                const type = el.dataset.type || 'reponse';
+                const style = el.dataset.style || 'popup';
+                const tStyle = {
+                    tColor: el.dataset.tColor || '#007bff',
+                    tSize: el.dataset.tSize || '18',
+                    tFont: el.dataset.tFont || '',
+                    tBold: el.dataset.tBold === 'true',
+                    tItalic: el.dataset.tItalic === 'true',
+                    tUnderline: el.dataset.tUnderline === 'true'
+                };
+
+                document.getElementById('triggerTexte').value = question;
+                document.getElementById('triggerContenu').value = contenu;
+                document.getElementById('triggerType').value = type;
+                document.getElementById('triggerStyle').value = style;
+                document.getElementById('triggerBonne').value = bonne ? 'true' : 'false';
+
+                document.getElementById('tColor').value = tStyle.tColor || '#007bff';
+                document.getElementById('tSize').value = tStyle.tSize || '18';
+                document.getElementById('tFont').value = tStyle.tFont || '';
+                document.getElementById('tBold').checked = tStyle.tBold || false;
+                document.getElementById('tItalic').checked = tStyle.tItalic || false;
+                document.getElementById('tUnderline').checked = tStyle.tUnderline || false;
+            }
+
+            if (estQCM) {
+                modeQCM = true;
+                document.getElementById('btnQCM').classList.add('active');
+                document.getElementById('btnQCM').textContent = '✅ Mode QCM activé';
+                document.getElementById('bonneGroup').classList.add('visible');
+            } else {
+                modeQCM = false;
+                document.getElementById('btnQCM').classList.remove('active');
+                document.getElementById('btnQCM').textContent = '📋 Mode QCM';
+                document.getElementById('bonneGroup').classList.remove('visible');
+            }
+
+            indexModification = -1;
+            document.getElementById('btnAjouterModifier').textContent = '✅ Ajouter';
+            document.getElementById('btnAjouterModifier').className = 'btn-confirm';
+            afficherListeDeclencheurs();
+            document.getElementById('modalDeclencheur').classList.add('active');
+        }
+
+        function ajouterDeclencheur() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) {
+                alert('⚠️ Sélectionnez d\'abord un texte dans l\'éditeur.');
+                return;
+            }
+            const texte = selection.toString().trim();
+            if (!texte) { alert('⚠️ Texte vide.'); return; }
+            savedRange = selection.getRangeAt(0);
+            elementOrigine = null;
+
+            document.getElementById('triggerTexte').value = texte;
+            document.getElementById('triggerContenu').value = '';
+            document.getElementById('triggerType').value = 'reponse';
+            document.getElementById('triggerStyle').value = 'popup';
+            document.getElementById('triggerBonne').value = 'false';
+
+            document.getElementById('tColor').value = '#007bff';
+            document.getElementById('tSize').value = '18';
+            document.getElementById('tFont').value = '';
+            document.getElementById('tBold').checked = false;
+            document.getElementById('tItalic').checked = false;
+            document.getElementById('tUnderline').checked = false;
+
+            estQuestion = false;
+            const btnQuestion = document.getElementById('btnQuestion');
+            btnQuestion.classList.remove('active');
+            btnQuestion.textContent = '❓ Définir comme Question';
+            btnQuestion.style.background = '#6f42c1';
+
+            modeQCM = false;
+            document.getElementById('btnQCM').classList.remove('active');
+            document.getElementById('btnQCM').textContent = '📋 Mode QCM';
+            document.getElementById('bonneGroup').classList.remove('visible');
+            indexModification = -1;
+            document.getElementById('btnAjouterModifier').textContent = '✅ Ajouter';
+            document.getElementById('btnAjouterModifier').className = 'btn-confirm';
+            listeDeclencheurs = [];
+            afficherListeDeclencheurs();
+            document.getElementById('modalDeclencheur').classList.add('active');
+        }
+
+        function fermerModalDeclencheur() {
+            document.getElementById('modalDeclencheur').classList.remove('active');
+            savedRange = null;
+            listeDeclencheurs = [];
+            indexModification = -1;
+            modeQCM = false;
+            estQuestion = false;
+            elementOrigine = null;
+            attacherDoubleClic();
+        }
+
+        function basculerQuestion() {
+            estQuestion = !estQuestion;
+            const btn = document.getElementById('btnQuestion');
+            if (estQuestion) {
+                btn.classList.add('active');
+                btn.textContent = '✅ Question définie';
+                btn.style.background = '#28a745';
+                if (indexModification >= 0 && listeDeclencheurs[indexModification]) {
+                    listeDeclencheurs[indexModification].isQuestion = true;
+                }
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '❓ Définir comme Question';
+                btn.style.background = '#6f42c1';
+                if (indexModification >= 0 && listeDeclencheurs[indexModification]) {
+                    listeDeclencheurs[indexModification].isQuestion = false;
+                }
+            }
+        }
+
+        function basculerQCM() {
+            modeQCM = !modeQCM;
+            modeQCMPersistant = modeQCM;
+            const btn = document.getElementById('btnQCM');
+            const group = document.getElementById('bonneGroup');
+            if (modeQCM) {
+                btn.classList.add('active');
+                btn.textContent = '✅ Mode QCM activé';
+                group.classList.add('visible');
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '📋 Mode QCM';
+                group.classList.remove('visible');
+                document.getElementById('triggerBonne').value = 'false';
+            }
+        }
+
+        function ajouterDeclencheurListe() {
+            const texte = document.getElementById('triggerTexte').value.trim();
+            const type = document.getElementById('triggerType').value;
+            const contenu = document.getElementById('triggerContenu').value.trim();
+            const style = document.getElementById('triggerStyle').value;
+            const bonne = modeQCM && document.getElementById('triggerBonne').value === 'true';
+            const tStyle = {
+                tColor: document.getElementById('tColor').value,
+                tSize: document.getElementById('tSize').value,
+                tFont: document.getElementById('tFont').value,
+                tBold: document.getElementById('tBold').checked,
+                tItalic: document.getElementById('tItalic').checked,
+                tUnderline: document.getElementById('tUnderline').checked
+            };
+
+            if (!texte) { alert('⚠️ Texte déclencheur vide.'); return; }
+            if (!contenu) { alert('⚠️ Contenu de la réponse vide.'); return; }
+
+            let contenuHTML = contenu;
+            if (type === 'image') {
+                contenuHTML = `<img src="${contenu}" style="max-width:100%; height:auto; border-radius:8px;">`;
+            } else if (type === 'lien') {
+                contenuHTML = `<a href="${contenu}" target="_blank" style="color:#007bff;">🔗 ${contenu}</a>`;
+            } else if (type === 'video') {
+                contenuHTML = `<video controls style="max-width:100%; border-radius:8px;"><source src="${contenu}"></video>`;
+            }
+
+            const nouvelItem = {
+                texte: texte,
+                contenu: contenuHTML,
+                style: style,
+                bonne: bonne,
+                tStyle: tStyle,
+                type: type,
+                isQuestion: estQuestion
+            };
+
+            if (indexModification >= 0) {
+                listeDeclencheurs[indexModification] = nouvelItem;
+                indexModification = -1;
+                document.getElementById('btnAjouterModifier').textContent = '✅ Ajouter';
+                document.getElementById('btnAjouterModifier').className = 'btn-confirm';
+            } else {
+                listeDeclencheurs.push(nouvelItem);
+            }
+
+            document.getElementById('triggerContenu').value = '';
+            document.getElementById('triggerBonne').value = 'false';
+            afficherListeDeclencheurs();
+        }
+
+        function supprimerDeclencheurListe(idx) {
+            if (confirm(`Supprimer ce déclencheur ?`)) {
+                listeDeclencheurs.splice(idx, 1);
+                if (indexModification === idx) {
+                    indexModification = -1;
+                    document.getElementById('btnAjouterModifier').textContent = '✅ Ajouter';
+                    document.getElementById('btnAjouterModifier').className = 'btn-confirm';
+                    document.getElementById('triggerTexte').value = '';
+                    document.getElementById('triggerContenu').value = '';
+                    document.getElementById('triggerBonne').value = 'false';
+                } else if (indexModification > idx) {
+                    indexModification--;
+                }
+                afficherListeDeclencheurs();
+            }
+        }
+
+        function modifierDeclencheurListe(idx) {
+            const item = listeDeclencheurs[idx];
+            document.getElementById('triggerTexte').value = item.texte;
+            document.getElementById('triggerContenu').value = item.contenu.replace(/<[^>]+>/g, '');
+            document.getElementById('triggerType').value = item.type || 'reponse';
+            document.getElementById('triggerStyle').value = item.style || 'popup';
+            document.getElementById('triggerBonne').value = item.bonne ? 'true' : 'false';
+
+            estQuestion = item.isQuestion === true;
+            const btn = document.getElementById('btnQuestion');
+            if (estQuestion) {
+                btn.classList.add('active');
+                btn.textContent = '✅ Question définie';
+                btn.style.background = '#28a745';
+            } else {
+                btn.classList.remove('active');
+                btn.textContent = '❓ Définir comme Question';
+                btn.style.background = '#6f42c1';
+            }
+
+            if (item.tStyle) {
+                document.getElementById('tColor').value = item.tStyle.tColor || '#007bff';
+                document.getElementById('tSize').value = item.tStyle.tSize || '18';
+                document.getElementById('tFont').value = item.tStyle.tFont || '';
+                document.getElementById('tBold').checked = item.tStyle.tBold || false;
+                document.getElementById('tItalic').checked = item.tStyle.tItalic || false;
+                document.getElementById('tUnderline').checked = item.tStyle.tUnderline || false;
+            }
+
+            indexModification = idx;
+            document.getElementById('btnAjouterModifier').textContent = '💾 Modifier';
+            document.getElementById('btnAjouterModifier').className = 'btn-confirm';
+        }
+
+        function afficherListeDeclencheurs() {
+            const container = document.getElementById('listTriggers');
+            if (listeDeclencheurs.length === 0) {
+                container.innerHTML = '<div class="empty">Aucun déclencheur pour cette question.</div>';
+                return;
+            }
+
+            let html = '';
+            listeDeclencheurs.forEach((item, idx) => {
+                const badge = item.bonne ? ' <span class="badge-bonne">✔️ Bonne</span>' : '';
+                const questionBadge = item.isQuestion ? ' <span class="badge-question">❓ Question</span>' : '';
+                const question = item.texte || 'Sans question';
+                const contenuPreview = (item.contenu || '').replace(/<[^>]+>/g, '').substring(0, 60);
+                const typeIcon = item.type === 'image' ? '🖼️' : item.type === 'lien' ? '🔗' : item.type === 'video' ? '🎬' : '📝';
+
+                html += `
+                    <div class="item">
+                        <span class="text">
+                            <strong>${typeIcon} ${question}</strong><br>
+                            <span style="font-size: 13px; color: #6c757d;">→ ${contenuPreview}${contenuPreview.length >= 60 ? '…' : ''}</span>
+                            ${badge}
+                            ${questionBadge}
+                        </span>
+                        <div class="actions">
+                            <button class="edit-btn" onclick="modifierDeclencheurListe(${idx})" title="Modifier">✏️</button>
+                            <button class="del-btn" onclick="supprimerDeclencheurListe(${idx})" title="Supprimer">✕</button>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function sauvegarderDeclencheurs() {
+            if (listeDeclencheurs.length === 0) {
+                alert('⚠️ Aucun déclencheur à sauvegarder.');
+                return;
+            }
+
+            const editeur = document.getElementById('contentEditable');
+            const success = Triggers.sauvegarder(editeur, listeDeclencheurs, modeQCM, elementOrigine, savedRange);
+
+            if (success) {
+                sauvegarder();
+                attacherDoubleClic();
+                alert(`✅ ${listeDeclencheurs.length} déclencheur(s) sauvegardé(s) !`);
+                listeDeclencheurs = [];
+                savedRange = null;
+                elementOrigine = null;
+                fermerModalDeclencheur();
+            }
+        }
+
+        function verifierAuthentification() {
+            if (!API._isAuthenticated()) {
+                window.location.href = '../login.html';
+                return false;
+            }
+            return true;
+        }
+
+        if (verifierAuthentification()) {
+            chargerDonnees();
+        }
+    </script>
+</body>
+</html>

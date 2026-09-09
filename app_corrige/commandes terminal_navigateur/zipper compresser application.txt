@@ -1,0 +1,3 @@
+cd ~/Bureau
+
+zip -r app_corrige.zip app_corrige

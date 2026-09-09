@@ -1,0 +1,15 @@
+Comment exporter tout votre code dans un seul fichier texte
+
+Étape 1 : Aller dans le bon dossier
+cd ~/Bureau/app_corrige
+
+
+
+Étape 3 : créer le fichier
+find . -type f \( -name "*.html" -o -name "*.js" -o -name "*.py" -o -name "*.json" \) -exec echo "=== FICHIER: {} ===" \; -exec cat {} \; > code_complet.txt
+
+
+
+Étape 4 : Vérifier que le fichier est créé
+ls -la code_complet.txt
+

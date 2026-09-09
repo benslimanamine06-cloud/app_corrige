@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Plateforme Pédagogique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 32px;
+            padding: 50px 40px 40px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.10);
+            animation: fadeUp 0.6s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo { text-align: center; margin-bottom: 8px; }
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1a1a2e;
+            letter-spacing: -0.5px;
+        }
+        .logo h1 span { color: #6f42c1; }
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            font-size: 15px;
+            margin-bottom: 32px;
+            font-weight: 400;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-radius: 16px;
+            font-weight: 600;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .btn:active { transform: scale(0.97); }
+        .btn-eleves {
+            background: #e7f3ff;
+            color: #0056b3;
+            border-color: #b8daff;
+        }
+        .btn-eleves:hover {
+            background: #cce5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 86, 179, 0.15);
+        }
+        .btn-eleves .icon { font-size: 32px; }
+        .btn-cours {
+            background: #f0ecf9;
+            color: #4a2b7a;
+            border-color: #d5c6e8;
+        }
+        .btn-cours:hover {
+            background: #e3daf2;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 43, 122, 0.15);
+        }
+        .btn-cours .icon { font-size: 32px; }
+        .btn .text { flex: 1; }
+        .btn .text small {
+            display: block;
+            font-weight: 400;
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 2px;
+        }
+        .btn .arrow {
+            font-size: 20px;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        .btn:hover .arrow { opacity: 1; }
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 13px;
+            color: #adb5bd;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 20px;
+        }
+        .footer .user-info {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 6px;
+        }
+        .footer .user-info .status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 6px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 30px 20px; }
+            .logo h1 { font-size: 24px; }
+            .btn { padding: 16px 18px; font-size: 16px; }
+            .btn .icon { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🏫 <span>Plateforme</span> Pédagogique</h1>
+        </div>
+        <p class="subtitle">Choisissez votre rubrique</p>
+
+        <div class="menu">
+            <a href="dashboard_eleves.html" class="btn btn-eleves" id="btnEleves">
+                <span class="icon">📊</span>
+                <span class="text">
+                    Gestion des élèves
+                    <small>Notes, comportement, photos</small>
+                </span>
+                <span class="arrow">→</span>
+            </a>
+            <a href="dashboard_cours.html" class="btn btn-cours" id="btnCours">
+                <span class="icon">📚</span>
+                <span class="text">
+                    Gestion des cours
+                    <small>Création, édition, projection</small>
+                </span>
+                <span class="arrow">→</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            🔐 Sécurisé
+            <div class="user-info">
+                <span class="status"></span>
+                Connecté
+            </div>
+        </div>
+    </div>
+
+    <script src="api.js"></script>
+    <script>
+        // ============================================================
+        // VÉRIFICATION DE L'AUTHENTIFICATION - SUPPRIMÉE
+        // ============================================================
+        // L'application est maintenant accessible sans authentification
+
+        // ============================================================
+        // RACCOURCIS CLAVIER
+        // ============================================================
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+1 : Gestion des élèves
+            if (e.ctrlKey && e.key === '1') {
+                e.preventDefault();
+                document.getElementById('btnEleves').click();
+            }
+            // Ctrl+2 : Gestion des cours
+            if (e.ctrlKey && e.key === '2') {
+                e.preventDefault();
+                document.getElementById('btnCours').click();
+            }
+        });
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Plus de vérification d'authentification nécessaire
+            console.log('🏫 Plateforme Pédagogique - Mode sans authentification');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>📊 Gestion des élèves</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            color: #1a1a2e;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 240px;
+            background: #1a1a2e;
+            color: white;
+            padding: 20px 16px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar .logo {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            color: #66b0ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .sidebar .logo span { color: white; font-weight: 400; }
+        .sidebar .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
+            margin: 12px 0 8px 0;
+        }
+        .sidebar .nav-item {
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            font-size: 14px;
+            touch-action: manipulation;
+        }
+        .sidebar .nav-item:hover { background: rgba(255,255,255,0.06); }
+        .sidebar .nav-item.active { background: #2d2d44; border-left: 3px solid #66b0ff; }
+        .sidebar .nav-item .badge {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+        .sidebar .btn-add {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .btn-add:active { transform: scale(0.97); }
+        .sidebar .btn-add:hover { background: #5a32a3; }
+        .sidebar .btn-back {
+            background: rgba(255,255,255,0.08);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            width: 100%;
+            margin-top: 8px;
+            transition: background 0.2s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar .btn-back:active { transform: scale(0.97); }
+        .sidebar .btn-back:hover { background: rgba(255,255,255,0.15); }
+
+        /* Bouton hamburger pour mobile */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            z-index: 1001;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* ===== MAIN ===== */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 28px;
+            overflow: hidden;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .top-bar h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a2e;
+        }
+        .top-bar h1 small {
+            font-weight: 400;
+            font-size: 15px;
+            color: #6c757d;
+        }
+        .top-bar .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .top-bar .actions input {
+            padding: 10px 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            min-width: 180px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .top-bar .actions input:focus { border-color: #6f42c1; }
+        .top-bar .actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
+            font-family: 'Inter', sans-serif;
+        }
+        .top-bar .actions button:active { transform: scale(0.96); }
+        .btn-export { background: #28a745; color: white; }
+        .btn-export:hover { background: #218838; }
+        .btn-export-all { background: #17a2b8; color: white; }
+        .btn-export-all:hover { background: #138496; }
+        .btn-add-eleve { background: #6f42c1; color: white; }
+        .btn-add-eleve:hover { background: #5a32a3; }
+        .btn-delete-eleve { background: #dc3545; color: white; }
+        .btn-delete-eleve:hover { background: #c82333; }
+
+        /* ===== TABLE ===== */
+        .table-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            border: 1px solid #f0f0f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        th {
+            background: #f8f9fa;
+            color: #495057;
+            font-weight: 600;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f3f5;
+            vertical-align: middle;
+        }
+        tr:hover { background: #f8f9fa; }
+        .clickable {
+            color: #6f42c1;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .clickable:hover { text-decoration: underline; }
+        .moyenne { font-weight: 700; text-align: center; }
+        .moyenne.good { color: #1a7a34; }
+        .moyenne.good::before { content: "✅ "; font-weight: 400; }
+        .moyenne.warning { color: #a86200; }
+        .moyenne.warning::before { content: "⚠️ "; font-weight: 400; }
+        .moyenne.danger { color: #a82030; }
+        .moyenne.danger::before { content: "❌ "; font-weight: 400; }
+        .badge-comportement {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #e9ecef;
+            color: #495057;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .badge-comportement:hover { background: #dee2e6; }
+        .badge-comportement.warning { background: #fff3cd; color: #856404; }
+        .badge-comportement.warning::before { content: "📌 "; }
+        .badge-comportement.danger { background: #f8d7da; color: #721c24; }
+        .badge-comportement.danger::before { content: "⚠️ "; }
+        .empty-row td {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .stats {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            font-size: 14px;
+            color: #495057;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stats strong { color: #1a1a2e; }
+
+        /* Champs dans le tableau */
+        .nom-input, .note-input {
+            width: 100%;
+            padding: 6px 4px;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: transparent;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+            text-align: center;
+        }
+        .nom-input {
+            text-align: left;
+            font-weight: 500;
+        }
+        .nom-input:focus, .note-input:focus {
+            border-color: #6f42c1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+        }
+        .nom-input:hover, .note-input:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        /* ===== VALIDATION DES NOTES ===== */
+        .note-input.invalid {
+            border-color: #dc3545 !important;
+            background: #fff5f5 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15) !important;
+        }
+        .note-input.invalid:focus {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25) !important;
+        }
+        .note-input.warning-note {
+            border-color: #fd7e14 !important;
+            background: #fff8f0 !important;
+            box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.12) !important;
+        }
+        .note-input.warning-note:focus {
+            border-color: #fd7e14 !important;
+            box-shadow: 0 0 0 3px rgba(253, 126, 20, 0.2) !important;
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .modal-header .close-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-header .close-btn:hover { background: #c82333; }
+
+        .photo-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .photo-container {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 3px solid #dee2e6;
+            flex-shrink: 0;
+        }
+        .photo-container img { width: 100%; height: 100%; object-fit: cover; }
+        .photo-container span { font-size: 13px; color: #6c757d; text-align: center; padding: 10px; }
+        .photo-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .photo-actions button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 13px;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .photo-actions .btn-import { background: #6f42c1; color: white; }
+        .photo-actions .btn-import:hover { background: #5a32a3; }
+        .photo-actions .btn-camera { background: #17a2b8; color: white; }
+        .photo-actions .btn-camera:hover { background: #138496; }
+        .photo-actions .btn-delete { background: #dc3545; color: white; display: none; }
+        .photo-actions .btn-delete:hover { background: #c82333; }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .notes-grid .note-item {
+            background: #f8f9fa;
+            padding: 12px 14px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .notes-grid .note-item label {
+            display: block;
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .notes-grid .note-item input {
+            width: 100%;
+            padding: 8px 4px;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            background: transparent;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+        }
+        .notes-grid .note-item input:focus {
+            border-color: #6f42c1;
+            background: white;
+        }
+        .notes-grid .note-item input.invalid {
+            border-color: #dc3545 !important;
+            background: #fff5f5 !important;
+        }
+        .moyenne-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 800;
+            margin: 8px 0 16px 0;
+            color: #1a1a2e;
+        }
+        .moyenne-display small { font-weight: 400; font-size: 16px; color: #6c757d; }
+        .moyenne-display.error { color: #dc3545; }
+
+        .comportement-section {
+            margin-top: 20px;
+            border-top: 2px solid #f0f0f0;
+            padding-top: 20px;
+        }
+        .comportement-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .counter-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 6px;
+        }
+        .counter-row span { font-weight: 500; }
+        .counter-row .controls { display: flex; gap: 6px; align-items: center; }
+        .counter-row .controls button {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 16px;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .counter-row .controls .minus { background: #dc3545; color: white; }
+        .counter-row .controls .minus:hover { background: #c82333; }
+        .counter-row .controls .plus { background: #28a745; color: white; }
+        .counter-row .controls .plus:hover { background: #218838; }
+        .counter-row .controls .del { background: transparent; color: #6c757d; font-size: 14px; }
+        .counter-row .controls .del:hover { color: #dc3545; }
+        .counter-row .controls .val { font-weight: 700; font-size: 18px; min-width: 30px; text-align: center; }
+        .add-compteur { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .add-compteur input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            min-width: 150px;
+        }
+        .add-compteur input:focus { border-color: #6f42c1; }
+        .add-compteur button {
+            padding: 10px 20px;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .add-compteur button:hover { background: #5a32a3; }
+        .remarques-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            resize: vertical;
+            min-height: 60px;
+            margin-top: 12px;
+            outline: none;
+        }
+        .remarques-textarea:focus { border-color: #6f42c1; }
+
+        .chart-container { height: 150px; margin-top: 16px; }
+
+        .btn-save-modal {
+            width: 100%;
+            padding: 14px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-save-modal:hover { background: #218838; }
+
+        .eleve-id {
+            font-size: 10px;
+            color: #adb5bd;
+            display: none;
+        }
+
+        /* Indicateur de sauvegarde */
+        .save-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-size: 13px;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.6;
+            transition: all 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+        .save-status.saving { opacity: 1; background: #6f42c1; }
+        .save-status.saved { opacity: 1; background: #28a745; }
+        .save-status.error { opacity: 1; background: #dc3545; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -280px;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .main { padding: 16px; padding-top: 60px; }
+            .top-bar { flex-direction: column; align-items: stretch; }
+            .top-bar .actions input { min-width: 100%; }
+            .modal-content { padding: 20px; max-width: 100%; margin: 10px; }
+            .notes-grid { grid-template-columns: 1fr; }
+            .photo-section { flex-direction: column; align-items: center; }
+            .nom-input, .note-input { font-size: 13px; padding: 4px 2px; }
+            .save-status { bottom: 10px; right: 10px; font-size: 11px; padding: 6px 12px; }
+        }
+        @media (max-width: 480px) {
+            .top-bar h1 { font-size: 18px; }
+            .top-bar .actions button { font-size: 13px; padding: 8px 14px; }
+            table { font-size: 12px; }
+            th, td { padding: 6px 8px; }
+            .modal-content { padding: 16px; }
+            .nom-input, .note-input { font-size: 12px; padding: 3px 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY pour fermer la sidebar sur mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- BOUTON HAMBURGER -->
+    <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">📊 <span>Élèves</span></div>
+        <div class="section-title">Niveaux</div>
+        <div id="niveauxList"></div>
+        <button class="btn-add" onclick="ajouterNiveau()">+ Ajouter un niveau</button>
+        <button class="btn-back" onclick="window.location.href='index.html'">🏠 Accueil</button>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="top-bar">
+            <h1 id="titreNiveau">Sélectionnez un niveau <small id="nbEleves"></small></h1>
+            <div class="actions">
+                <input type="text" id="searchInput" placeholder="🔍 Rechercher un élève..." oninput="filtrerEleves()">
+                <button class="btn-export" onclick="exporterCSV()">📤 Export CSV</button>
+                <button class="btn-export-all" onclick="exporterToutesDonnees()">💾 Sauvegarde</button>
+                <button class="btn-add-eleve" onclick="ajouterÉlève()">+ Ajouter</button>
+                <button class="btn-delete-eleve" onclick="supprimerÉlève()">🗑️ Supprimer</button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:40px;">N°</th>
+                        <th style="min-width:150px;">Nom</th>
+                        <th style="width:80px;">Oral</th>
+                        <th style="width:80px;">Contrôle</th>
+                        <th style="width:80px;">Synthèse</th>
+                        <th style="width:80px;">Moyenne</th>
+                        <th style="width:120px;">Comportement</th>
+                        <th style="width:40px;">ID</th>
+                    </tr>
+                </thead>
+                <tbody id="elevesTableBody"></tbody>
+            </table>
+            <div class="stats" id="statsBar"></div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal" id="modalEleve">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalNom">📝 Fiche élève</h2>
+                <button class="close-btn" onclick="fermerModal()">✕ Fermer</button>
+            </div>
+
+            <div class="photo-section">
+                <div class="photo-container" id="containerPhoto"><span>Aucune photo</span></div>
+                <div class="photo-actions">
+                    <button class="btn-import" onclick="document.getElementById('inputPhoto').click()">📁 Importer</button>
+                    <button class="btn-camera" onclick="document.getElementById('inputCamera').click()">📷 Appareil</button>
+                    <button class="btn-delete" id="btnSupprimerPhoto" onclick="supprimerPhoto()">🗑️ Supprimer</button>
+                </div>
+                <input type="file" id="inputPhoto" accept="image/*" style="display:none;" onchange="previsualiserPhoto(this)">
+                <input type="file" id="inputCamera" accept="image/*" capture="environment" style="display:none;" onchange="previsualiserPhoto(this)">
+            </div>
+
+            <div class="notes-grid">
+                <div class="note-item">
+                    <label>Oral /20</label>
+                    <input type="text" id="editOral" min="0" max="20" step="0.5" 
+                           onchange="validerNoteModale('editOral')" oninput="validerNoteModale('editOral')">
+                </div>
+                <div class="note-item">
+                    <label>Contrôle /20</label>
+                    <input type="text" id="editControle" min="0" max="20" step="0.5" 
+                           onchange="validerNoteModale('editControle')" oninput="validerNoteModale('editControle')">
+                </div>
+                <div class="note-item">
+                    <label>Synthèse /20</label>
+                    <input type="text" id="editSynthese" min="0" max="20" step="0.5" 
+                           onchange="validerNoteModale('editSynthese')" oninput="validerNoteModale('editSynthese')">
+                </div>
+            </div>
+            <div class="moyenne-display" id="editMoyenne">-</div>
+
+            <div class="comportement-section">
+                <h3>📋 Comportement</h3>
+                <div id="comportementContainer"></div>
+                <div class="add-compteur">
+                    <input type="text" id="nouveauCompteur" placeholder="Nouveau type (ex: Retard)" maxlength="30">
+                    <button onclick="ajouterCompteur()">➕ Ajouter</button>
+                </div>
+                <textarea class="remarques-textarea" id="remarquesText" placeholder="Remarques générales..."></textarea>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="chartEleve"></canvas>
+            </div>
+
+            <button class="btn-save-modal" onclick="sauvegarderÉlève()">💾 Sauvegarder</button>
+        </div>
+    </div>
+
+    <!-- INDICATEUR DE SAUVEGARDE -->
+    <div class="save-status" id="saveStatus">
+        <span id="saveIcon">💾</span>
+        <span id="saveText">Sauvegardé</span>
+    </div>
+
+    <script>
+        // ============================================================
+        // ÉTAT
+        // ============================================================
+        let niveaux = [];
+        let donnees = {};
+        let niveauActuel = null;
+        let eleveActuelId = null;
+        let eleveActuel = null;
+        let chartInstance = null;
+        let tempPhotoData = null;
+        let typesCompteursGlobaux = [];
+        let totalEleves = 40;
+        let rechercheTimer = null;
+        let dirty = false;
+
+        // ============================================================
+        // SIDEBAR RESPONSIVE
+        // ============================================================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        // Fermer la sidebar si on clique en dehors
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.getElementById('menuToggle');
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+            }
+        });
+
+        // ============================================================
+        // INDICATEUR DE SAUVEGARDE
+        // ============================================================
+        function updateSaveStatus(status, message) {
+            const el = document.getElementById('saveStatus');
+            const icon = document.getElementById('saveIcon');
+            const text = document.getElementById('saveText');
+            
+            el.className = 'save-status';
+            if (status === 'saving') {
+                el.classList.add('saving');
+                icon.textContent = '⏳';
+                text.textContent = message || 'Sauvegarde...';
+            } else if (status === 'saved') {
+                el.classList.add('saved');
+                icon.textContent = '✅';
+                text.textContent = message || `Sauvegardé à ${new Date().toLocaleTimeString()}`;
+                setTimeout(() => { el.style.opacity = '0.6'; }, 3000);
+            } else if (status === 'error') {
+                el.classList.add('error');
+                icon.textContent = '❌';
+                text.textContent = message || 'Erreur';
+                setTimeout(() => { el.style.opacity = '0.6'; }, 5000);
+            }
+        }
+
+        // ============================================================
+        // FONCTIONS UTILITAIRES
+        // ============================================================
+        function genererId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function trouverEleveParId(id) {
+            const liste = donnees[niveauActuel]?.eleves || [];
+            return liste.find(e => e.id === id);
+        }
+
+        function getEleves() {
+            return donnees[niveauActuel]?.eleves || [];
+        }
+
+        // ============================================================
+        // VALIDATION DES NOTES
+        // ============================================================
+        function validerNote(valeur) {
+            let val = valeur.replace(',', '.');
+            let num = parseFloat(val);
+            
+            if (val === '' || val === '-' || val === null || val === undefined) {
+                return { valide: true, valeur: '' };
+            }
+            
+            if (isNaN(num)) {
+                return { valide: false, valeur: val, erreur: 'Veuillez saisir un nombre' };
+            }
+            
+            if (num < 0) {
+                return { valide: false, valeur: val, erreur: 'La note ne peut pas être négative' };
+            }
+            if (num > 20) {
+                return { valide: false, valeur: val, erreur: 'La note ne peut pas dépasser 20' };
+            }
+            
+            if (num % 0.5 !== 0) {
+                return { valide: false, valeur: val, erreur: 'La note doit être un multiple de 0.5' };
+            }
+            
+            return { valide: true, valeur: num };
+        }
+
+        function validerNoteSaisie(input) {
+            const resultat = validerNote(input.value);
+            
+            input.classList.remove('invalid', 'warning-note');
+            
+            if (!resultat.valide && input.value !== '') {
+                input.classList.add('invalid');
+                input.title = resultat.erreur || 'Note invalide';
+                return false;
+            }
+            
+            if (resultat.valeur !== '' && resultat.valeur < 5) {
+                input.classList.add('warning-note');
+                input.title = '⚠️ Note très basse';
+            } else {
+                input.title = '';
+            }
+            
+            return true;
+        }
+
+        function validerNoteModale(id) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            
+            const resultat = validerNote(input.value);
+            input.classList.remove('invalid');
+            
+            if (!resultat.valide && input.value !== '') {
+                input.classList.add('invalid');
+                alert(resultat.erreur);
+                input.value = '';
+                calculerMoyenne();
+                return;
+            }
+            
+            calculerMoyenne();
+        }
+
+        // ============================================================
+        // CHARGEMENT
+        // ============================================================
+        async function chargerDonnees() {
+            updateSaveStatus('saving', 'Chargement...');
+            
+            const data = await API.load('all_eleves');
+            if (data && data.niveaux) {
+                niveaux = data.niveaux;
+                donnees = data.donnees || {};
+                typesCompteursGlobaux = data.typesCompteurs || [
+                    { id: 'devoir', nom: 'Devoirs non faits' },
+                    { id: 'cahier', nom: 'Oubli de cahier' },
+                    { id: 'livre', nom: 'Oubli de livre' }
+                ];
+                
+                // Migration : ajouter des IDs aux anciens élèves
+                for (const niveau of niveaux) {
+                    if (donnees[niveau] && donnees[niveau].eleves) {
+                        donnees[niveau].eleves.forEach(e => {
+                            if (!e.id) e.id = genererId();
+                        });
+                    }
+                }
+            } else {
+                niveaux = ['7b1', '7b2', '9b2'];
+                donnees = {};
+                niveaux.forEach(n => { 
+                    donnees[n] = { eleves: [] }; 
+                });
+                typesCompteursGlobaux = [
+                    { id: 'devoir', nom: 'Devoirs non faits' },
+                    { id: 'cahier', nom: 'Oubli de cahier' },
+                    { id: 'livre', nom: 'Oubli de livre' }
+                ];
+            }
+            afficherNiveaux();
+            if (niveaux.length > 0) {
+                selectionnerNiveau(niveaux[0]);
+            }
+            setInterval(sauvegarderAuto, 30000);
+            updateSaveStatus('saved', 'Données chargées');
+        }
+
+        // ============================================================
+        // AFFICHAGE NIVEAUX
+        // ============================================================
+        function afficherNiveaux() {
+            const container = document.getElementById('niveauxList');
+            container.innerHTML = '';
+            niveaux.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'nav-item' + (n === niveauActuel ? ' active' : '');
+                const nb = donnees[n]?.eleves?.length || 0;
+                div.innerHTML = `${n} <span class="badge">${nb}</span>`;
+                div.onclick = () => selectionnerNiveau(n);
+                container.appendChild(div);
+            });
+        }
+
+        // ============================================================
+        // SÉLECTION NIVEAU
+        // ============================================================
+        function selectionnerNiveau(niveau) {
+            niveauActuel = niveau;
+            if (!donnees[niveau]) donnees[niveau] = { eleves: [] };
+            if (!donnees[niveau].eleves) donnees[niveau].eleves = [];
+            document.getElementById('titreNiveau').innerHTML = `${niveau} <small id="nbEleves">(${donnees[niveau].eleves.length} élèves sur ${totalEleves})</small>`;
+            afficherNiveaux();
+            afficherEleves();
+        }
+
+        // ============================================================
+        // AFFICHAGE ÉLÈVES
+        // ============================================================
+        function afficherEleves(filtre = '') {
+            const tbody = document.getElementById('elevesTableBody');
+            tbody.innerHTML = '';
+            const liste = donnees[niveauActuel]?.eleves || [];
+            const filtreLower = filtre.toLowerCase();
+            let totalMoyenne = 0;
+            let compteurEleves = 0;
+
+            for (let i = 1; i <= totalEleves; i++) {
+                const index = i - 1;
+                const eleve = liste[index] || null;
+                const id = eleve?.id || '';
+                const nom = eleve?.nom || '';
+                const oral = eleve?.notes?.oral || '';
+                const controle = eleve?.notes?.controle || '';
+                const synthese = eleve?.notes?.synthese || '';
+
+                let moyenne = '-';
+                let moyenneClass = '';
+                if (oral !== '' && controle !== '' && synthese !== '') {
+                    const o = parseFloat(oral) || 0;
+                    const c = parseFloat(controle) || 0;
+                    const s = parseFloat(synthese) || 0;
+                    const moy = (o + c + s * 2) / 4;
+                    moyenne = moy.toFixed(2);
+                    moyenneClass = moy >= 10 ? 'good' : (moy >= 7 ? 'warning' : 'danger');
+                    if (moy > 0) { totalMoyenne += moy; compteurEleves++; }
+                }
+
+                let comportBadge = '✅ OK';
+                let badgeClass = '';
+                if (eleve) {
+                    const compteurs = eleve.comportement?.compteurs || {};
+                    const total = Object.values(compteurs).reduce((a, b) => a + b, 0);
+                    if (total > 5) { comportBadge = `${total}`; badgeClass = 'danger'; }
+                    else if (total > 2) { comportBadge = `${total}`; badgeClass = 'warning'; }
+                }
+
+                let displayStyle = '';
+                if (filtre && nom && !nom.toLowerCase().includes(filtreLower)) {
+                    displayStyle = 'style="display:none;"';
+                }
+
+                const tr = document.createElement('tr');
+                tr.dataset.id = id;
+                tr.className = 'eleve-row';
+                tr.innerHTML = `
+                    <td>${i}</td>
+                    <td>
+                        <input type="text" class="nom-input" value="${nom}" placeholder="Élève ${i}" maxlength="50" 
+                               data-id="${id}" onchange="sauvegarderChamp('${id}', 'nom', this.value)">
+                    </td>
+                    <td>
+                        <input type="text" class="note-input oral-input" value="${oral}" placeholder="-"
+                               data-id="${id}" data-champ="oral" 
+                               onchange="validerEtSauvegarderNote('${id}', 'oral', this)"
+                               oninput="validerNoteSaisie(this)">
+                    </td>
+                    <td>
+                        <input type="text" class="note-input controle-input" value="${controle}" placeholder="-"
+                               data-id="${id}" data-champ="controle" 
+                               onchange="validerEtSauvegarderNote('${id}', 'controle', this)"
+                               oninput="validerNoteSaisie(this)">
+                    </td>
+                    <td>
+                        <input type="text" class="note-input synthese-input" value="${synthese}" placeholder="-"
+                               data-id="${id}" data-champ="synthese" 
+                               onchange="validerEtSauvegarderNote('${id}', 'synthese', this)"
+                               oninput="validerNoteSaisie(this)">
+                    </td>
+                    <td class="moyenne ${moyenneClass}" id="moyenne-${id}">${moyenne}</td>
+                    <td>
+                        <span class="badge-comportement ${badgeClass}" onclick="ouvrirFiche('${id}')" data-id="${id}">${comportBadge}</span>
+                    </td>
+                    <td><span class="eleve-id">${id}</span></td>
+                `;
+                tr.style.display = displayStyle;
+                tbody.appendChild(tr);
+            }
+
+            const moyClasse = compteurEleves > 0 ? (totalMoyenne / compteurEleves).toFixed(2) : '-';
+            document.getElementById('statsBar').innerHTML = `
+                <span>📊 <strong>${liste.length}</strong> élèves sur ${totalEleves}</span>
+                <span>📈 Moyenne classe : <strong>${moyClasse}</strong></span>
+            `;
+            document.getElementById('nbEleves').textContent = `(${liste.length} élèves sur ${totalEleves})`;
+        }
+
+        // ============================================================
+        // FILTRE AVEC DEBOUNCE
+        // ============================================================
+        function filtrerEleves() {
+            clearTimeout(rechercheTimer);
+            rechercheTimer = setTimeout(() => {
+                const val = document.getElementById('searchInput').value;
+                afficherEleves(val);
+            }, 300);
+        }
+
+        // ============================================================
+        // SAUVEGARDER LES CHAMPS
+        // ============================================================
+        function sauvegarderChamp(id, champ, valeur) {
+            if (!niveauActuel) return;
+            const liste = donnees[niveauActuel].eleves;
+            const eleve = liste.find(e => e.id === id);
+            if (eleve) {
+                eleve.nom = valeur;
+            }
+            sauvegarder();
+            afficherNiveaux();
+        }
+
+        function validerEtSauvegarderNote(id, champ, input) {
+            const valide = validerNoteSaisie(input);
+            if (!valide) {
+                const eleve = trouverEleveParId(id);
+                if (eleve && eleve.notes && eleve.notes[champ] !== undefined) {
+                    input.value = eleve.notes[champ] || '';
+                    input.classList.remove('invalid');
+                } else {
+                    input.value = '';
+                    input.classList.remove('invalid');
+                }
+                mettreAJourMoyenne(id);
+                return;
+            }
+            sauvegarderNote(id, champ, input.value);
+        }
+
+        function sauvegarderNote(id, champ, valeur) {
+            if (!niveauActuel) return;
+            const liste = donnees[niveauActuel].eleves;
+            let eleve = liste.find(e => e.id === id);
+            
+            if (!eleve) {
+                eleve = {
+                    id: id,
+                    nom: '',
+                    notes: { oral: '', controle: '', synthese: '' },
+                    comportement: { compteurs: {}, remarques: '' },
+                    photo: ''
+                };
+                liste.push(eleve);
+            }
+            
+            if (!eleve.notes) {
+                eleve.notes = { oral: '', controle: '', synthese: '' };
+            }
+            eleve.notes[champ] = valeur;
+            
+            mettreAJourMoyenne(id);
+            sauvegarder();
+        }
+
+        function mettreAJourMoyenne(id) {
+            const eleve = trouverEleveParId(id);
+            if (!eleve) return;
+            
+            const oral = parseFloat(eleve.notes?.oral) || 0;
+            const controle = parseFloat(eleve.notes?.controle) || 0;
+            const synthese = parseFloat(eleve.notes?.synthese) || 0;
+            const moy = (oral + controle + synthese * 2) / 4;
+            const moyElement = document.getElementById(`moyenne-${id}`);
+            if (moyElement) {
+                moyElement.textContent = moy > 0 ? moy.toFixed(2) : '-';
+                moyElement.className = 'moyenne ' + (moy >= 10 ? 'good' : (moy >= 7 ? 'warning' : 'danger'));
+            }
+        }
+
+        // ============================================================
+        // NAVIGATION AU CLAVIER
+        // ============================================================
+        document.addEventListener('keydown', function(e) {
+            const active = document.activeElement;
+            if (!active || !active.classList.contains('note-input') && !active.classList.contains('nom-input')) return;
+
+            const inputs = document.querySelectorAll('#elevesTableBody input');
+            const currentIndex = Array.from(inputs).indexOf(active);
+            let newIndex = -1;
+
+            switch(e.key) {
+                case 'ArrowDown':
+                    e.preventDefault();
+                    newIndex = Math.min(currentIndex + 1, inputs.length - 1);
+                    break;
+                case 'ArrowUp':
+                    e.preventDefault();
+                    newIndex = Math.max(currentIndex - 1, 0);
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    const row = active.closest('tr');
+                    const rowInputs = row.querySelectorAll('input');
+                    const rowIndex = Array.from(rowInputs).indexOf(active);
+                    if (rowIndex < rowInputs.length - 1) {
+                        rowInputs[rowIndex + 1].focus();
+                        rowInputs[rowIndex + 1].select();
+                    }
+                    return;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    const row2 = active.closest('tr');
+                    const rowInputs2 = row2.querySelectorAll('input');
+                    const rowIndex2 = Array.from(rowInputs2).indexOf(active);
+                    if (rowIndex2 > 0) {
+                        rowInputs2[rowIndex2 - 1].focus();
+                        rowInputs2[rowIndex2 - 1].select();
+                    }
+                    return;
+                default:
+                    return;
+            }
+
+            if (newIndex >= 0 && newIndex < inputs.length) {
+                inputs[newIndex].focus();
+                inputs[newIndex].select();
+            }
+        });
+
+        // ============================================================
+        // AJOUT ÉLÈVE
+        // ============================================================
+        function ajouterÉlève() {
+            if (!niveauActuel) { alert('Sélectionnez d\'abord un niveau.'); return; }
+            const nom = prompt('Nom de l\'élève :');
+            if (nom && nom.trim()) {
+                const liste = donnees[niveauActuel].eleves;
+                if (liste.length >= totalEleves) {
+                    alert('⚠️ Nombre maximum d\'élèves atteint (40).');
+                    return;
+                }
+                const nouvelEleve = {
+                    id: genererId(),
+                    nom: nom.trim(),
+                    notes: { oral: '', controle: '', synthese: '' },
+                    comportement: { compteurs: {}, remarques: '' },
+                    photo: ''
+                };
+                liste.push(nouvelEleve);
+                sauvegarder();
+                afficherEleves(document.getElementById('searchInput').value);
+                afficherNiveaux();
+            }
+        }
+
+        // ============================================================
+        // SUPPRIMER ÉLÈVE
+        // ============================================================
+        function supprimerÉlève() {
+            if (!niveauActuel) { alert('Sélectionnez d\'abord un niveau.'); return; }
+            
+            const selectedRow = document.querySelector('#elevesTableBody tr.selected');
+            if (!selectedRow) {
+                alert('⚠️ Veuillez cliquer sur une ligne pour la sélectionner, puis supprimer.');
+                return;
+            }
+            
+            const id = selectedRow.dataset.id;
+            if (!id) {
+                alert('⚠️ ID de l\'élève non trouvé.');
+                return;
+            }
+            
+            const eleve = trouverEleveParId(id);
+            if (!eleve) {
+                alert('⚠️ Élève non trouvé.');
+                return;
+            }
+            
+            if (confirm(`Supprimer définitivement "${eleve.nom || 'Élève sans nom'}" ?`)) {
+                const liste = donnees[niveauActuel].eleves;
+                const index = liste.findIndex(e => e.id === id);
+                if (index !== -1) {
+                    liste.splice(index, 1);
+                    sauvegarder();
+                    afficherEleves(document.getElementById('searchInput').value);
+                    afficherNiveaux();
+                    alert('✅ Élève supprimé.');
+                }
+            }
+        }
+
+        // ============================================================
+        // SÉLECTIONNER UNE LIGNE
+        // ============================================================
+        document.addEventListener('click', function(e) {
+            const row = e.target.closest('.eleve-row');
+            if (row) {
+                document.querySelectorAll('.eleve-row').forEach(r => r.classList.remove('selected'));
+                row.classList.add('selected');
+            }
+        });
+
+        // ============================================================
+        // AJOUT NIVEAU
+        // ============================================================
+        function ajouterNiveau() {
+            const nom = prompt('Nom du nouveau niveau (ex: 8B3) :');
+            if (nom && nom.trim()) {
+                const n = nom.trim();
+                if (niveaux.includes(n)) { alert('Ce niveau existe déjà.'); return; }
+                niveaux.push(n);
+                donnees[n] = { eleves: [] };
+                sauvegarder();
+                afficherNiveaux();
+                selectionnerNiveau(n);
+            }
+        }
+
+        // ============================================================
+        // OUVERTURE FICHE
+        // ============================================================
+        function ouvrirFiche(id) {
+            if (!niveauActuel) return;
+            const eleve = trouverEleveParId(id);
+            if (!eleve || !eleve.nom) {
+                alert('⚠️ Cet élève n\'existe pas. Créez-le en saisissant son nom.');
+                return;
+            }
+            eleveActuelId = id;
+            eleveActuel = eleve;
+            document.getElementById('modalNom').textContent = `📝 ${eleve.nom || 'Élève'}`;
+
+            document.getElementById('editOral').value = eleve.notes?.oral || '';
+            document.getElementById('editControle').value = eleve.notes?.controle || '';
+            document.getElementById('editSynthese').value = eleve.notes?.synthese || '';
+            calculerMoyenne();
+
+            const container = document.getElementById('containerPhoto');
+            const btnSuppr = document.getElementById('btnSupprimerPhoto');
+            if (eleve.photo) {
+                container.innerHTML = `<img src="${eleve.photo}">`;
+                btnSuppr.style.display = 'inline-block';
+            } else {
+                container.innerHTML = `<span>Aucune photo</span>`;
+                btnSuppr.style.display = 'none';
+            }
+            tempPhotoData = null;
+            document.getElementById('inputPhoto').value = '';
+            document.getElementById('inputCamera').value = '';
+
+            afficherComportement(eleve);
+            document.getElementById('remarquesText').value = eleve.comportement?.remarques || '';
+
+            afficherGraphique(eleve);
+
+            document.getElementById('modalEleve').classList.add('active');
+        }
+
+        function fermerModal() {
+            document.getElementById('modalEleve').classList.remove('active');
+            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+        }
+
+        // ============================================================
+        // CALCUL MOYENNE
+        // ============================================================
+        function calculerMoyenne() {
+            const oral = parseFloat(document.getElementById('editOral').value) || 0;
+            const controle = parseFloat(document.getElementById('editControle').value) || 0;
+            const synthese = parseFloat(document.getElementById('editSynthese').value) || 0;
+            const moyenne = (oral + controle + synthese * 2) / 4;
+            const display = document.getElementById('editMoyenne');
+            display.innerHTML = moyenne > 0 ? moyenne.toFixed(2) + '<small>/20</small>' : '-';
+            display.classList.remove('error');
+            return moyenne;
+        }
+
+        // ============================================================
+        // COMPORTEMENT
+        // ============================================================
+        function afficherComportement(eleve) {
+            const container = document.getElementById('comportementContainer');
+            container.innerHTML = '';
+            const compteurs = eleve.comportement?.compteurs || {};
+
+            Object.entries(compteurs).forEach(([key, val]) => {
+                const div = document.createElement('div');
+                div.className = 'counter-row';
+                div.innerHTML = `
+                    <span>${key}</span>
+                    <div class="controls">
+                        <button class="minus" onclick="modifierCompteur('${key}', -1)">−</button>
+                        <span class="val">${val}</span>
+                        <button class="plus" onclick="modifierCompteur('${key}', 1)">+</button>
+                        <button class="del" onclick="supprimerCompteur('${key}')">✕</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            typesCompteursGlobaux.forEach(t => {
+                if (compteurs[t.id] === undefined) {
+                    const div = document.createElement('div');
+                    div.className = 'counter-row';
+                    div.style.opacity = '0.5';
+                    div.innerHTML = `
+                        <span>${t.nom}</span>
+                        <div class="controls">
+                            <span class="val" style="color:#6c757d;">0</span>
+                            <button class="plus" onclick="ajouterCompteurGlobal('${t.id}')" style="background:#6f42c1;color:white;border:none;border-radius:8px;padding:4px 12px;cursor:pointer;">+</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function modifierCompteur(key, delta) {
+            if (!eleveActuel) return;
+            if (!eleveActuel.comportement) eleveActuel.comportement = { compteurs: {} };
+            eleveActuel.comportement.compteurs[key] = (eleveActuel.comportement.compteurs[key] || 0) + delta;
+            if (eleveActuel.comportement.compteurs[key] < 0) eleveActuel.comportement.compteurs[key] = 0;
+            afficherComportement(eleveActuel);
+            afficherEleves(document.getElementById('searchInput').value);
+        }
+
+        function supprimerCompteur(key) {
+            if (!eleveActuel) return;
+            if (confirm(`Supprimer "${key}" ?`)) {
+                delete eleveActuel.comportement.compteurs[key];
+                afficherComportement(eleveActuel);
+                afficherEleves(document.getElementById('searchInput').value);
+            }
+        }
+
+        function ajouterCompteur() {
+            const input = document.getElementById('nouveauCompteur');
+            const val = input.value.trim();
+            if (!val || !eleveActuel) return;
+            if (!eleveActuel.comportement) eleveActuel.comportement = { compteurs: {} };
+            if (eleveActuel.comportement.compteurs[val] !== undefined) { alert('Ce type existe déjà.'); return; }
+            eleveActuel.comportement.compteurs[val] = 0;
+            input.value = '';
+            if (!typesCompteursGlobaux.find(t => t.id === val)) {
+                typesCompteursGlobaux.push({ id: val, nom: val });
+            }
+            afficherComportement(eleveActuel);
+            afficherEleves(document.getElementById('searchInput').value);
+        }
+
+        function ajouterCompteurGlobal(id) {
+            if (!eleveActuel) return;
+            if (!eleveActuel.comportement) eleveActuel.comportement = { compteurs: {} };
+            eleveActuel.comportement.compteurs[id] = 0;
+            afficherComportement(eleveActuel);
+            afficherEleves(document.getElementById('searchInput').value);
+        }
+
+        // ============================================================
+        // PHOTO
+        // ============================================================
+        function previsualiserPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPhotoData = e.target.result;
+                    document.getElementById('containerPhoto').innerHTML = `<img src="${tempPhotoData}">`;
+                    document.getElementById('btnSupprimerPhoto').style.display = 'inline-block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function supprimerPhoto() {
+            if (confirm('Supprimer la photo ?')) {
+                tempPhotoData = null;
+                if (eleveActuel) eleveActuel.photo = '';
+                document.getElementById('containerPhoto').innerHTML = '<span>Aucune photo</span>';
+                document.getElementById('btnSupprimerPhoto').style.display = 'none';
+                document.getElementById('inputPhoto').value = '';
+                document.getElementById('inputCamera').value = '';
+            }
+        }
+
+        // ============================================================
+        // GRAPHIQUE
+        // ============================================================
+        function afficherGraphique(eleve) {
+            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+
+            const ctx = document.getElementById('chartEleve').getContext('2d');
+            const oral = parseFloat(eleve.notes?.oral) || 0;
+            const controle = parseFloat(eleve.notes?.controle) || 0;
+            const synthese = parseFloat(eleve.notes?.synthese) || 0;
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Oral', 'Contrôle', 'Synthèse'],
+                    datasets: [{
+                        label: 'Notes /20',
+                        data: [oral, controle, synthese],
+                        backgroundColor: ['#6f42c1', '#28a745', '#fd7e14'],
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { min: 0, max: 20, ticks: { stepSize: 5 } }
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        // SAUVEGARDE
+        // ============================================================
+        async function sauvegarder() {
+            if (!niveauActuel) return;
+            updateSaveStatus('saving', 'Sauvegarde...');
+            
+            const payload = { niveaux, donnees, typesCompteurs: typesCompteursGlobaux };
+            const result = await API.save('all_eleves', payload);
+            
+            if (result) {
+                updateSaveStatus('saved', 'Sauvegardé');
+            } else {
+                updateSaveStatus('error', 'Erreur de sauvegarde');
+            }
+            afficherNiveaux();
+        }
+
+        function sauvegarderAuto() {
+            sauvegarder();
+        }
+
+        function sauvegarderÉlève() {
+            if (!eleveActuel) return;
+            eleveActuel.notes = {
+                oral: document.getElementById('editOral').value || '',
+                controle: document.getElementById('editControle').value || '',
+                synthese: document.getElementById('editSynthese').value || ''
+            };
+            if (tempPhotoData) {
+                eleveActuel.photo = tempPhotoData;
+                tempPhotoData = null;
+            }
+            eleveActuel.comportement.remarques = document.getElementById('remarquesText').value;
+            sauvegarder();
+            afficherEleves(document.getElementById('searchInput').value);
+            alert('✅ Élève sauvegardé !');
+            fermerModal();
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+        function exporterCSV() {
+            if (!niveauActuel) return;
+            const liste = donnees[niveauActuel]?.eleves || [];
+            if (liste.length === 0) { alert('Aucun élève à exporter.'); return; }
+
+            let csv = 'ID;Nom;Oral;Contrôle;Synthèse;Moyenne;Incidents\n';
+            liste.forEach(e => {
+                const oral = parseFloat(e.notes?.oral) || 0;
+                const controle = parseFloat(e.notes?.controle) || 0;
+                const synthese = parseFloat(e.notes?.synthese) || 0;
+                const moyenne = ((oral + controle + synthese * 2) / 4).toFixed(2);
+                const total = Object.values(e.comportement?.compteurs || {}).reduce((a, b) => a + b, 0);
+                csv += `${e.id};${e.nom};${oral};${controle};${synthese};${moyenne};${total}\n`;
+            });
+
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${niveauActuel}_eleves.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        async function exporterToutesDonnees() {
+            await API.exporterToutesDonnees();
+        }
+
+        // ============================================================
+        // VERIFICATION AUTH
+        // ============================================================
+        function verifierAuthentification() {
+            if (!API._isAuthenticated()) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (verifierAuthentification()) {
+            chargerDonnees();
+        }
+    </script>
+</body>
+</html>

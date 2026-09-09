@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Mode Présentation</title>
+    <script src="../api.js"></script>
+    <script src="../triggers.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1a1a2e;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* ============================================================
+           DIAPORAMA - UTILISATION MAXIMALE DE L'ÉCRAN
+           ============================================================ */
+        .diapo-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 15px;
+            padding-bottom: 70px;
+            position: relative;
+            background: #ffffff;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .diapo-content {
+            font-size: 44px;
+            line-height: 1.5;
+            text-align: center;
+            max-width: 95vw;
+            max-height: 88vh;
+            overflow: hidden;
+            padding: 5px 10px;
+            white-space: normal;
+            word-wrap: break-word;
+            color: #1a1a2e;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: font-size 0.2s ease;
+        }
+        .diapo-content::-webkit-scrollbar { display: none; }
+
+        /* ============================================================
+           STYLES MINIMAUX - PAS D'ENCADREMENTS
+           Les styles héritent de l'éditeur
+           ============================================================ */
+
+        /* Les réponses sont CACHÉES par défaut */
+        .trigger-reponse-content {
+            display: none !important;
+            margin: 2px 0 !important;
+            padding: 2px 0 !important;
+            border: none !important;
+            background: transparent !important;
+            word-wrap: break-word;
+            white-space: normal;
+            width: 100%;
+            max-width: 100%;
+            text-align: left;
+        }
+
+        /* Quand les réponses sont révélées */
+        .trigger-wrapper.reponses-visible .trigger-reponse-content {
+            display: block !important;
+        }
+
+        /* Questions - cliquables, sans encadrement */
+        .trigger-question {
+            cursor: pointer;
+            margin: 2px 0 !important;
+            padding: 2px 0 !important;
+            border: none !important;
+            background: transparent !important;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+        .trigger-question:hover {
+            opacity: 0.7;
+            transform: scale(1.01);
+        }
+        .trigger-question:active {
+            transform: scale(0.98);
+        }
+
+        /* Wrapper minimal */
+        .trigger-wrapper {
+            margin: 2px 0 !important;
+            padding: 2px 0 !important;
+            border: none !important;
+            background: transparent !important;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* ============================================================
+           FIN STYLES MINIMAUX
+           ============================================================ */
+
+        /* ===== STYLES DES DÉCLENCHEURS ===== */
+        .trigger-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            margin: 6px 0;
+            width: 100%;
+        }
+        
+        .trigger-element[data-type="question"] {
+            display: inline-block !important;
+            cursor: pointer;
+            padding: 2px 6px !important;
+            border: none !important;
+            background: transparent !important;
+            margin: 1px 2px !important;
+            font-size: inherit;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .trigger-element[data-type="question"]:hover {
+            opacity: 0.7;
+            transform: scale(1.01);
+        }
+        .trigger-element[data-type="question"]:active {
+            transform: scale(0.98);
+        }
+        
+        .trigger-element[data-type="reponse"] {
+            display: none !important;
+            padding: 2px 6px !important;
+            border: none !important;
+            background: transparent !important;
+            margin: 1px 0 !important;
+            font-size: inherit;
+            width: 100%;
+            max-width: 100%;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: left;
+        }
+        
+        .trigger-group.reponses-visible .trigger-element[data-type="reponse"] {
+            display: block !important;
+        }
+        
+        .trigger-group[data-qcm="true"] .trigger-element[data-type="reponse"] {
+            display: inline-block !important;
+            cursor: pointer;
+            padding: 2px 10px !important;
+            border: none !important;
+            background: transparent !important;
+            margin: 1px 2px !important;
+            font-size: inherit;
+            width: auto;
+            max-width: 100%;
+            word-wrap: break-word;
+            white-space: normal;
+            text-align: left;
+        }
+        .trigger-group[data-qcm="true"] .trigger-element[data-type="reponse"]:hover {
+            opacity: 0.7;
+            transform: scale(1.02);
+        }
+        .trigger-group[data-qcm="true"] .trigger-element[data-type="reponse"].qcm-correct {
+            color: #28a745 !important;
+        }
+        .trigger-group[data-qcm="true"] .trigger-element[data-type="reponse"].qcm-incorrect {
+            color: #dc3545 !important;
+        }
+
+        .trigger-response {
+            margin-top: 2px;
+            padding: 2px 6px;
+            border: none !important;
+            background: transparent !important;
+            font-size: inherit;
+            word-wrap: break-word;
+            white-space: normal;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* ===== MODAL POPUP ===== */
+        .modal-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-popup.active { display: flex; }
+        .modal-popup .modal-content {
+            background: white;
+            color: #1a1a2e;
+            padding: 32px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalIn 0.3s ease-out;
+        }
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-popup .modal-content .close-modal {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: background 0.2s;
+        }
+        .modal-popup .modal-content .close-modal:hover { background: #c82333; }
+
+        .diapo-counter {
+            font-size: 16px;
+            color: #6c757d;
+            margin-top: 6px;
+        }
+
+        /* ===== CONTROLES ===== */
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-top: 1px solid rgba(0,0,0,0.06);
+            pointer-events: none;
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .controls.visible { opacity: 1; pointer-events: all; }
+        .controls.fige { opacity: 1; pointer-events: all; }
+
+        .controls-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .ctrl-btn {
+            background: rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #1a1a2e;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 38px;
+            min-height: 38px;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-family: 'Inter', sans-serif;
+        }
+        .ctrl-btn:active { transform: scale(0.94); }
+        .ctrl-btn:hover {
+            background: rgba(0,0,0,0.1);
+            transform: scale(1.03);
+        }
+        .ctrl-btn.danger { background: #dc3545; border-color: #dc3545; color: white; }
+        .ctrl-btn.danger:hover { background: #c82333; }
+        .ctrl-btn.primary { background: #6f42c1; border-color: #6f42c1; color: white; }
+        .ctrl-btn.primary:hover { background: #5a32a3; }
+        .ctrl-btn.small { padding: 4px 10px; font-size: 12px; min-width: 32px; min-height: 32px; }
+        .ctrl-btn.reponse {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .ctrl-btn.reponse:hover { background: #218838; }
+        .ctrl-btn.reponse.active { background: #28a745; border-color: #28a745; color: white; }
+        .ctrl-btn.reponse.gris { background: #6c757d; border-color: #6c757d; color: white; }
+        .ctrl-btn.reponse.gris:hover { background: #5a6268; }
+        .ctrl-btn.reponse .fleche { font-size: 14px; padding: 0 4px; cursor: pointer; }
+        .ctrl-btn.corrige { background: #6f42c1; border-color: #6f42c1; color: white; }
+        .ctrl-btn.corrige:hover { background: #5a32a3; }
+        .ctrl-btn.corrige.active { background: #fd7e14; border-color: #fd7e14; color: #fff; }
+        .ctrl-btn.corrige.active:hover { background: #e8590c; }
+        .ctrl-btn.fullscreen { background: #17a2b8; border-color: #17a2b8; color: white; }
+        .ctrl-btn.fullscreen:hover { background: #138496; }
+        .ctrl-btn.figer {
+            background: #6f42c1;
+            border-color: #6f42c1;
+            color: white;
+        }
+        .ctrl-btn.figer:hover { background: #5a32a3; }
+        .ctrl-btn.figer.active {
+            background: #fd7e14;
+            border-color: #fd7e14;
+            color: white;
+        }
+        .ctrl-btn.figer.active:hover { background: #e8590c; }
+
+        .position-indicator {
+            font-size: 14px;
+            color: #6c757d;
+            padding: 0 6px;
+            font-weight: 500;
+        }
+
+        .titre-lecon {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6f42c1;
+            padding: 0 8px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .touch-hint {
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(0,0,0,0.2);
+            font-size: 13px;
+            transition: opacity 0.5s;
+            pointer-events: none;
+            z-index: 50;
+            text-align: center;
+            font-weight: 500;
+        }
+        .touch-hint.hidden { opacity: 0; }
+
+        .rep-counter {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .session-info {
+            position: fixed;
+            top: 12px;
+            right: 16px;
+            font-size: 11px;
+            color: rgba(0,0,0,0.25);
+            z-index: 50;
+            text-align: right;
+            pointer-events: none;
+        }
+        .session-info .status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .session-info .status.online { background: #28a745; }
+        .session-info .status.offline { background: #dc3545; }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (min-width: 1400px) {
+            .diapo-content {
+                max-width: 96vw;
+                max-height: 90vh;
+            }
+            .diapo-container {
+                padding: 8px 20px;
+                padding-bottom: 65px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .diapo-content { max-width: 94vw; max-height: 86vh; }
+            .diapo-container { padding: 10px 15px; padding-bottom: 70px; }
+        }
+
+        @media (max-width: 768px) {
+            .diapo-content { padding: 8px; font-size: 28px !important; max-height: 85vh; }
+            .controls { padding: 8px 12px; justify-content: center; }
+            .ctrl-btn { padding: 6px 12px; font-size: 13px; min-width: 34px; min-height: 34px; }
+            .controls-group { gap: 4px; justify-content: center; }
+            .diapo-container { padding: 8px 10px; padding-bottom: 65px; }
+            .modal-popup .modal-content { padding: 16px; margin: 10px; }
+            .titre-lecon { font-size: 12px; min-width: 80px; }
+            .ctrl-btn.reponse .fleche { font-size: 11px; }
+            .session-info { font-size: 9px; top: 6px; right: 10px; }
+            .trigger-question { padding: 2px 6px !important; font-size: 0.95em; }
+            .trigger-reponse-content { padding: 2px 6px !important; font-size: 0.95em; }
+            .trigger-wrapper { padding: 1px 4px !important; }
+        }
+
+        @media (max-width: 480px) {
+            .diapo-content { padding: 4px; font-size: 20px !important; max-height: 82vh; }
+            .ctrl-btn { padding: 4px 8px; font-size: 11px; min-width: 30px; min-height: 30px; }
+            .controls { padding: 4px 6px; gap: 3px; }
+            .touch-hint { font-size: 10px; bottom: 55px; }
+            .modal-popup .modal-content { padding: 12px; }
+            .titre-lecon { font-size: 10px; min-width: 60px; }
+            .ctrl-btn.reponse .fleche { font-size: 9px; }
+            .session-info { display: none; }
+            .trigger-question { padding: 1px 4px !important; font-size: 0.85em; }
+            .trigger-reponse-content { padding: 1px 4px !important; font-size: 0.85em; }
+            .trigger-wrapper { padding: 1px 2px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Session Info -->
+    <div class="session-info" id="sessionInfo">
+        <span class="status online" id="statusDot"></span>
+        <span id="statusText">Connecté</span>
+    </div>
+
+    <div class="diapo-container" id="diapoContainer">
+        <div class="diapo-content" id="diapoContenu">Chargement...</div>
+        <div class="rep-counter" id="repCounter"></div>
+        <div class="diapo-counter" id="diapoCompteur">1 / 1</div>
+    </div>
+
+    <div class="touch-hint" id="touchHint">👆 Touchez l'écran ou bougez la souris</div>
+
+    <div class="controls" id="controls">
+        <div class="controls-group">
+            <button class="ctrl-btn" onclick="diapoPrecedent()" title="Diapositive précédente (←)">◀</button>
+            <button class="ctrl-btn" onclick="diapoSuivant()" title="Diapositive suivante (→)">▶</button>
+            <span class="position-indicator" id="positionIndicator">1 / 1</span>
+        </div>
+        <div class="controls-group">
+            <span class="titre-lecon" id="titreLeconAffichage"></span>
+        </div>
+        <div class="controls-group">
+            <button class="ctrl-btn reponse" id="btnReponse" onclick="revelerReponseSuivante()" style="display:none;">
+                <span class="fleche" onclick="event.stopPropagation();reculerReponse()">◄</span>
+                Réponse
+                <span class="fleche" onclick="event.stopPropagation();avancerReponse()">►</span>
+            </button>
+            <button class="ctrl-btn corrige small" id="btnCorrige" onclick="activerCorrige()" style="display:none;">📝 Corrigé</button>
+            <button class="ctrl-btn figer small" id="btnFiger" onclick="basculerFiger()" title="Figer les contrôles (F)">🔒 Figer</button>
+            <button class="ctrl-btn fullscreen small" onclick="toggleFullscreen()" title="Plein écran (F11)">⛶</button>
+            <button class="ctrl-btn danger small" onclick="retourMenu()" title="Quitter">✕</button>
+        </div>
+    </div>
+
+    <div class="modal-popup" id="modalPopup">
+        <div class="modal-content">
+            <h2 id="popupTitle" style="margin-top:0;">📌</h2>
+            <div id="popupBody"></div>
+            <button class="close-modal" onclick="fermerPopup()">✕ Fermer</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // INJECTER LES STYLES DES DÉCLENCHEURS
+        // ============================================================
+        Triggers.injectStyles('.diapo-content');
+
+        // ============================================================
+        // VARIABLES
+        // ============================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const seanceIndex = parseInt(urlParams.get('seance')) || 0;
+        const niveau = urlParams.get('niveau') || localStorage.getItem('niveauActuelCours') || 'Non défini';
+        const trimestre = urlParams.get('trimestre') || localStorage.getItem('trimestreActuel') || 'Non défini';
+        const moduleNom = urlParams.get('module') || localStorage.getItem('moduleActuel') || 'Non défini';
+
+        // ============================================================
+        // ÉTAT - NOUVELLE STRUCTURE
+        // ============================================================
+        let donneesCompletes = null;
+        let moduleTrouve = null;
+        let listeSeances = [];
+        let etapes = [];
+        let indexEtapeActuel = 0;
+        let listeDeclencheurs = [];
+        let modeQCM = false;
+        let corrigeActif = false;
+        let titreLecon = '';
+        let reponseActuelleIndex = -1;
+
+        let controlesFiges = false;
+        let timerControles = null;
+        const DELAI_AFFICHAGE = 10000;
+
+        let taillePoliceCachee = null;
+        let dimensionsCachees = { hauteur: 0, largeur: 0 };
+        let resizeTimeout = null;
+
+        let sessionActive = true;
+
+        // ============================================================
+        // VERIFICATION AUTH
+        // ============================================================
+        function verifierAuthentification() {
+            if (!API._isAuthenticated()) {
+                window.location.href = '../login.html';
+                return false;
+            }
+            return true;
+        }
+
+        // ============================================================
+        // FERMETURE POPUP
+        // ============================================================
+        function fermerPopup() {
+            document.getElementById('modalPopup').classList.remove('active');
+        }
+
+        // ============================================================
+        // CHARGEMENT - NOUVELLE MÉTHODE
+        // ============================================================
+        async function chargerModule() {
+            if (!verifierAuthentification()) return;
+
+            try {
+                const response = await fetch('/load', { headers: API._getHeaders() });
+                if (response.status === 401) {
+                    window.location.href = '../login.html';
+                    return;
+                }
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Récupérer all_cours
+                    const allCours = data.all_cours || { cours: {}, niveaux: [] };
+                    donneesCompletes = allCours;
+                    
+                    // Trouver le niveau
+                    const coursNiveau = allCours.cours?.[niveau];
+                    if (!coursNiveau) {
+                        alert(`⚠️ Niveau "${niveau}" non trouvé.`);
+                        window.location.href = '../dashboard_cours.html';
+                        return;
+                    }
+                    
+                    // Trouver le module par son titre et son trimestre
+                    const modules = coursNiveau.modules || [];
+                    moduleTrouve = modules.find(m => 
+                        m.trimestre === trimestre && m.titre === moduleNom
+                    );
+                    
+                    if (!moduleTrouve) {
+                        alert(`⚠️ Module "${moduleNom}" non trouvé dans "${trimestre}".`);
+                        window.location.href = '../dashboard_cours.html';
+                        return;
+                    }
+                    
+                    // Récupérer les séances
+                    listeSeances = moduleTrouve.seances || [];
+                    
+                    if (listeSeances.length === 0) {
+                        alert('⚠️ Aucune séance trouvée dans ce module.');
+                        window.location.href = '../dashboard_cours.html';
+                        return;
+                    }
+                } else {
+                    alert('⚠️ Erreur de chargement des données.');
+                    window.location.href = '../dashboard_cours.html';
+                    return;
+                }
+
+                if (seanceIndex >= listeSeances.length) {
+                    alert('⚠️ Séance introuvable.');
+                    window.location.href = '../dashboard_cours.html';
+                    return;
+                }
+
+                const seance = listeSeances[seanceIndex];
+                titreLecon = seance.titreLecon || '';
+
+                const diaporama = seance.diaporama;
+                if (diaporama && diaporama.length > 0) {
+                    etapes = diaporama.map(d => d.contenu || '');
+                } else {
+                    const texteComplet = seance.contenu?.trim() || '';
+                    if (!texteComplet) {
+                        etapes = ['Aucun contenu.'];
+                    } else {
+                        etapes = texteComplet.split(/\n+/).filter(p => p.trim() !== '');
+                        if (etapes.length === 0) etapes = [texteComplet];
+                    }
+                }
+
+                indexEtapeActuel = 0;
+                modeQCM = false;
+                corrigeActif = false;
+                document.getElementById('btnCorrige').style.display = 'none';
+                document.getElementById('btnCorrige').classList.remove('active');
+                document.getElementById('btnCorrige').textContent = '📝 Corrigé';
+
+                const titreElement = document.getElementById('titreLeconAffichage');
+                titreElement.textContent = titreLecon ? '📖 ' + titreLecon : '';
+
+                afficherEtapeCourante();
+                setTimeout(() => afficherControles(), 500);
+            } catch (e) {
+                console.error('Erreur :', e);
+                alert('❌ Erreur de chargement.');
+                window.location.href = '../dashboard_cours.html';
+            }
+        }
+
+        // ============================================================
+        // AJUSTEMENT DE LA POLICE - VERSION OPTIMISÉE POUR PROJECTION
+        // ============================================================
+        function ajusterTaillePolice() {
+            const container = document.getElementById('diapoContenu');
+            if (!container) return;
+
+            const hauteurActuelle = window.innerHeight;
+            const largeurActuelle = window.innerWidth;
+
+            if (hauteurActuelle === dimensionsCachees.hauteur &&
+                largeurActuelle === dimensionsCachees.largeur &&
+                taillePoliceCachee !== null) {
+                container.style.fontSize = taillePoliceCachee + 'px';
+                return;
+            }
+
+            dimensionsCachees.hauteur = hauteurActuelle;
+            dimensionsCachees.largeur = largeurActuelle;
+
+            // === CORRECTION : Utiliser TOUT l'écran ===
+            // 88% de la hauteur et 92% de la largeur (au lieu de 78% et 85%)
+            const maxHeight = window.innerHeight * 0.88;
+            const maxWidth = window.innerWidth * 0.92;
+
+            // Taille de base plus grande pour les projections
+            let baseSize = 44;
+            if (window.innerWidth < 480) {
+                baseSize = 22;
+            } else if (window.innerWidth < 768) {
+                baseSize = 30;
+            } else if (window.innerWidth < 1024) {
+                baseSize = 38;
+            }
+
+            let minSize = 10;
+            let maxSize = baseSize;
+            let meilleureTaille = minSize;
+
+            function testerTaille(taille) {
+                container.style.fontSize = taille + 'px';
+                // Forcer le reflow
+                void container.offsetHeight;
+                const scrollHeight = container.scrollHeight;
+                const scrollWidth = container.scrollWidth;
+                return {
+                    scrollHeight,
+                    scrollWidth,
+                    valide: scrollHeight <= maxHeight && scrollWidth <= maxWidth
+                };
+            }
+
+            const testBase = testerTaille(baseSize);
+            if (testBase.valide) {
+                meilleureTaille = baseSize;
+                taillePoliceCachee = baseSize;
+                appliquerTailleAuxElements(container, baseSize);
+                return;
+            }
+
+            let iterations = 0;
+            const maxIterations = 25;
+
+            while (iterations < maxIterations && minSize < maxSize) {
+                iterations++;
+                const midSize = Math.floor((minSize + maxSize) / 2);
+                const test = testerTaille(midSize);
+
+                if (test.valide) {
+                    meilleureTaille = midSize;
+                    minSize = midSize + 1;
+                } else {
+                    maxSize = midSize - 1;
+                }
+            }
+
+            const testFinal = testerTaille(meilleureTaille);
+            if (!testFinal.valide && meilleureTaille > 10) {
+                let taille = meilleureTaille;
+                while (taille > 10) {
+                    const test = testerTaille(taille);
+                    if (test.valide) {
+                        meilleureTaille = taille;
+                        break;
+                    }
+                    taille -= 1;
+                }
+            }
+
+            // Si même la plus petite taille ne convient pas, forcer à 12px
+            if (!testerTaille(meilleureTaille).valide && meilleureTaille > 12) {
+                meilleureTaille = 12;
+            }
+
+            container.style.fontSize = meilleureTaille + 'px';
+            taillePoliceCachee = meilleureTaille;
+
+            appliquerTailleAuxElements(container, meilleureTaille);
+        }
+
+        // Fonction helper pour appliquer la taille à tous les éléments
+        function appliquerTailleAuxElements(container, taille) {
+            container.querySelectorAll('.trigger-reponse-content, .trigger-question, .trigger-element, p, div, span').forEach(function(el) {
+                if (el.style && el.style.fontSize) {
+                    // Ne pas écraser les tailles importantes
+                    if (parseFloat(el.style.fontSize) < taille || el.style.fontSize === '') {
+                        el.style.fontSize = taille + 'px';
+                    }
+                } else if (el.style) {
+                    el.style.fontSize = taille + 'px';
+                }
+            });
+        }
+
+        function debounceResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                taillePoliceCachee = null;
+                dimensionsCachees = { hauteur: 0, largeur: 0 };
+                ajusterTaillePolice();
+            }, 250);
+        }
+
+        // ============================================================
+        // AFFICHAGE DIAPOSITIVE AVEC RÉPONSES CACHÉES
+        // ============================================================
+        function afficherEtapeCourante() {
+            const container = document.getElementById('diapoContenu');
+            const contenu = etapes[indexEtapeActuel] || 'Contenu vide.';
+            container.innerHTML = contenu;
+
+            Triggers.appliquerStyles(container);
+            listeDeclencheurs = Triggers.extraire(container);
+
+            // ============================================================
+            // Cacher les réponses (trigger-reponse-content)
+            // ============================================================
+            container.querySelectorAll('.trigger-reponse-content').forEach(function(el) {
+                el.style.display = 'none';
+                el.affiche = false;
+            });
+
+            // Ajouter un écouteur de clic sur chaque question pour révéler la réponse
+            container.querySelectorAll('.trigger-question').forEach(function(el) {
+                el.removeEventListener('click', revelerReponseWrapper);
+                el.addEventListener('click', revelerReponseWrapper);
+            });
+
+            // Fonction pour révéler la réponse au clic sur la question
+            function revelerReponseWrapper(e) {
+                e.stopPropagation();
+                const wrapper = this.closest('.trigger-wrapper');
+                if (!wrapper) return;
+
+                const reponse = wrapper.querySelector('.trigger-reponse-content');
+                if (reponse) {
+                    if (reponse.style.display === 'none' || reponse.style.display === '') {
+                        reponse.style.display = 'block';
+                        wrapper.classList.add('reponses-visible');
+                        // Mettre à jour le compteur
+                        const total = container.querySelectorAll('.trigger-reponse-content:not([style*="display: none"])').length;
+                        document.getElementById('repCounter').textContent = total + ' / ' + total;
+                    } else {
+                        reponse.style.display = 'none';
+                        wrapper.classList.remove('reponses-visible');
+                        // Mettre à jour le compteur
+                        const total = container.querySelectorAll('.trigger-reponse-content:not([style*="display: none"])').length;
+                        document.getElementById('repCounter').textContent = total + ' / ' + total;
+                    }
+                }
+            }
+
+            // ============================================================
+            // Gestion QCM / Déclencheurs
+            // ============================================================
+            const groupe = container.querySelector('.trigger-group');
+            const estQCM = groupe && groupe.dataset.qcm === 'true';
+
+            const btnReponse = document.getElementById('btnReponse');
+            const repCounter = document.getElementById('repCounter');
+            const nbReponses = listeDeclencheurs.length;
+
+            if (estQCM) {
+                modeQCM = true;
+                listeDeclencheurs.forEach((item, idx) => {
+                    item.element.style.display = 'inline-block';
+                    item.affiche = true;
+                    item.element.classList.remove('selected');
+                    item.element.classList.remove('qcm-correct', 'qcm-incorrect');
+                });
+                btnReponse.style.display = 'none';
+                document.getElementById('btnCorrige').style.display = 'inline-block';
+                document.getElementById('btnCorrige').classList.remove('active');
+                document.getElementById('btnCorrige').textContent = '📝 Corrigé';
+                repCounter.textContent = `${listeDeclencheurs.length} réponse(s)`;
+                corrigeActif = false;
+                enleverCorrige();
+                reponseActuelleIndex = -1;
+                if (groupe) groupe.classList.remove('reponses-visible');
+            } else if (nbReponses > 0) {
+                modeQCM = false;
+                reponseActuelleIndex = -1;
+
+                // Masquer les réponses (déjà fait plus haut)
+                // Configurer le bouton réponse
+                btnReponse.style.display = 'inline-flex';
+                btnReponse.classList.remove('gris');
+                btnReponse.classList.add('active');
+                btnReponse.innerHTML = '<span class="fleche" onclick="event.stopPropagation();reculerReponse()">◄</span> Réponse <span class="fleche" onclick="event.stopPropagation();avancerReponse()">►</span>';
+
+                // Compter les réponses visibles
+                const visibles = container.querySelectorAll('.trigger-reponse-content:not([style*="display: none"])').length;
+                repCounter.textContent = `0 / ${nbReponses}`;
+                document.getElementById('btnCorrige').style.display = 'none';
+                corrigeActif = false;
+                document.getElementById('btnCorrige').classList.remove('active');
+                document.getElementById('btnCorrige').textContent = '📝 Corrigé';
+                if (groupe) groupe.classList.remove('reponses-visible');
+            } else {
+                modeQCM = false;
+                reponseActuelleIndex = -1;
+                btnReponse.style.display = 'none';
+                repCounter.textContent = '';
+                document.getElementById('btnCorrige').style.display = 'none';
+                corrigeActif = false;
+                document.getElementById('btnCorrige').classList.remove('active');
+                document.getElementById('btnCorrige').textContent = '📝 Corrigé';
+                if (groupe) groupe.classList.remove('reponses-visible');
+            }
+
+            // Attacher les événements des déclencheurs (popup, inline, bottom)
+            Triggers.attacherEvenements(container, {
+                onPopup: function(titre, contenu) {
+                    document.getElementById('popupTitle').innerText = '📌 ' + titre;
+                    document.getElementById('popupBody').innerHTML = contenu;
+                    document.getElementById('modalPopup').classList.add('active');
+                },
+                onInline: function(element, contenu) {
+                    element.innerHTML = contenu;
+                },
+                onBottom: function(element, contenu) {
+                    var existing = element.parentNode.querySelector('.trigger-response');
+                    if (existing) existing.remove();
+                    var div = document.createElement('div');
+                    div.className = 'trigger-response';
+                    div.innerHTML = contenu;
+                    element.parentNode.insertBefore(div, element.nextSibling);
+                }
+            });
+
+            ajusterTaillePolice();
+
+            document.getElementById('diapoCompteur').innerText = `${indexEtapeActuel + 1} / ${etapes.length}`;
+            document.getElementById('positionIndicator').innerText = `${indexEtapeActuel + 1} / ${etapes.length}`;
+        }
+
+        // ============================================================
+        // RÉVÉLER LES RÉPONSES (via le bouton)
+        // ============================================================
+        function revelerReponseSuivante() {
+            if (modeQCM) return;
+            const container = document.getElementById('diapoContenu');
+
+            // Trouver toutes les réponses cachées (trigger-reponse-content)
+            const reponses = container.querySelectorAll('.trigger-reponse-content');
+            let total = 0;
+
+            reponses.forEach(function(el) {
+                if (el.style.display === 'none' || el.style.display === '') {
+                    el.style.display = 'block';
+                    const wrapper = el.closest('.trigger-wrapper');
+                    if (wrapper) wrapper.classList.add('reponses-visible');
+                    el.affiche = true;
+                    total++;
+                }
+            });
+
+            if (total > 0) {
+                // Compter toutes les réponses maintenant visibles
+                const totalReponses = container.querySelectorAll('.trigger-reponse-content:not([style*="display: none"])').length;
+                document.getElementById('repCounter').textContent = totalReponses + ' / ' + totalReponses;
+                const btnReponse = document.getElementById('btnReponse');
+                btnReponse.classList.remove('active');
+                btnReponse.classList.add('gris');
+                btnReponse.style.display = 'none';
+            }
+        }
+
+        function reculerReponse() {
+            // Fonction pour naviguer entre les réponses (non utilisée pour le moment)
+        }
+
+        function avancerReponse() {
+            // Fonction pour naviguer entre les réponses (non utilisée pour le moment)
+        }
+
+        function masquerToutesReponses() {
+            const container = document.getElementById('diapoContenu');
+            const reponses = container.querySelectorAll('.trigger-reponse-content');
+
+            reponses.forEach(function(el) {
+                el.style.display = 'none';
+                const wrapper = el.closest('.trigger-wrapper');
+                if (wrapper) wrapper.classList.remove('reponses-visible');
+                el.affiche = false;
+            });
+
+            document.getElementById('repCounter').textContent = '';
+            const btnReponse = document.getElementById('btnReponse');
+            btnReponse.classList.add('active');
+            btnReponse.classList.remove('gris');
+            btnReponse.style.display = 'inline-flex';
+        }
+
+        function afficherToutesReponses() {
+            listeDeclencheurs.forEach((item, idx) => {
+                item.element.style.display = 'inline';
+                item.affiche = true;
+                item.element.classList.remove('selected');
+                item.element.classList.remove('qcm-correct', 'qcm-incorrect');
+            });
+            reponseActuelleIndex = -1;
+        }
+
+        function reinitialiserReponses() {
+            const container = document.getElementById('diapoContenu');
+            const reponses = container.querySelectorAll('.trigger-reponse-content');
+
+            reponses.forEach(function(el) {
+                el.style.display = 'none';
+                const wrapper = el.closest('.trigger-wrapper');
+                if (wrapper) wrapper.classList.remove('reponses-visible');
+                el.affiche = false;
+            });
+
+            const btnReponse = document.getElementById('btnReponse');
+            btnReponse.classList.remove('gris');
+            btnReponse.classList.add('active');
+            btnReponse.style.display = 'inline-flex';
+            document.getElementById('repCounter').textContent = '';
+        }
+
+        // ============================================================
+        // CORRIGÉ (QCM)
+        // ============================================================
+        function activerCorrige() {
+            if (!modeQCM) return;
+            corrigeActif = !corrigeActif;
+            if (corrigeActif) {
+                document.getElementById('btnCorrige').classList.add('active');
+                document.getElementById('btnCorrige').textContent = '✅ Corrigé';
+                Triggers.appliquerCorrige(listeDeclencheurs, true);
+            } else {
+                document.getElementById('btnCorrige').classList.remove('active');
+                document.getElementById('btnCorrige').textContent = '📝 Corrigé';
+                Triggers.appliquerCorrige(listeDeclencheurs, false);
+            }
+        }
+
+        function enleverCorrige() {
+            Triggers.appliquerCorrige(listeDeclencheurs, false);
+        }
+
+        // ============================================================
+        // NAVIGATION AVEC CONFIRMATION QCM
+        // ============================================================
+        function diapoSuivant() {
+            if (modeQCM) {
+                const toutesReponses = listeDeclencheurs.every(item =>
+                    item.element.classList.contains('qcm-correct') ||
+                    item.element.classList.contains('qcm-incorrect')
+                );
+
+                if (!toutesReponses) {
+                    if (!confirm('⚠️ Vous n\'avez pas répondu à toutes les questions.\n\nVoulez-vous quand même passer à la diapositive suivante ?')) {
+                        return;
+                    }
+                }
+            }
+
+            reinitialiserReponses();
+            if (indexEtapeActuel < etapes.length - 1) {
+                indexEtapeActuel++;
+                afficherEtapeCourante();
+                afficherControles();
+            }
+        }
+
+        function diapoPrecedent() {
+            reinitialiserReponses();
+            if (indexEtapeActuel > 0) {
+                indexEtapeActuel--;
+                afficherEtapeCourante();
+                afficherControles();
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // ============================================================
+        // AFFICHAGE DES COMMANDES
+        // ============================================================
+        function afficherControles() {
+            const controls = document.getElementById('controls');
+            const hint = document.getElementById('touchHint');
+
+            if (controlesFiges) {
+                controls.classList.add('visible', 'fige');
+                hint.classList.add('hidden');
+                return;
+            }
+
+            controls.classList.add('visible');
+            hint.classList.add('hidden');
+
+            clearTimeout(timerControles);
+            timerControles = setTimeout(() => {
+                if (!controlesFiges) {
+                    controls.classList.remove('visible');
+                    hint.classList.remove('hidden');
+                }
+            }, DELAI_AFFICHAGE);
+        }
+
+        // ============================================================
+        // BASCULER LE FIGEMENT DES CONTRÔLES
+        // ============================================================
+        function basculerFiger() {
+            controlesFiges = !controlesFiges;
+            const btn = document.getElementById('btnFiger');
+            const controls = document.getElementById('controls');
+
+            if (controlesFiges) {
+                btn.classList.add('active');
+                btn.innerHTML = '🔓 Défiger';
+                controls.classList.add('visible', 'fige');
+                document.getElementById('touchHint').classList.add('hidden');
+                clearTimeout(timerControles);
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '🔒 Figer';
+                afficherControles();
+            }
+        }
+
+        // ============================================================
+        // ÉVÉNEMENTS
+        // ============================================================
+        document.addEventListener('mousemove', afficherControles);
+        document.addEventListener('touchstart', afficherControles);
+        document.addEventListener('click', afficherControles);
+
+        document.getElementById('diapoContainer').addEventListener('click', function(e) {
+            if (e.target.closest('.trigger-element') || e.target.closest('.modal-popup')) return;
+            afficherControles();
+        });
+
+        window.addEventListener('resize', debounceResize);
+
+        // ============================================================
+        // RACCOURCIS CLAVIER
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                basculerFiger();
+                return;
+            }
+
+            afficherControles();
+
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                diapoSuivant();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                diapoPrecedent();
+            } else if (e.key === 'Escape') {
+                fermerPopup();
+                if (document.fullscreenElement) document.exitFullscreen();
+            } else if (e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+
+        // ============================================================
+        // RETOUR
+        // ============================================================
+        function retourMenu() {
+            if (confirm('Voulez-vous quitter la présentation ?')) {
+                window.location.href = '../dashboard_cours.html';
+            }
+        }
+
+        // ============================================================
+        // VERIFICATION DE SESSION
+        // ============================================================
+        async function verifierSession() {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            try {
+                const response = await fetch('/load', { headers: API._getHeaders() });
+                if (response.status === 401) {
+                    dot.className = 'status offline';
+                    text.textContent = 'Session expirée';
+                    sessionActive = false;
+                } else {
+                    dot.className = 'status online';
+                    text.textContent = 'Connecté';
+                    sessionActive = true;
+                }
+            } catch (e) {
+                dot.className = 'status offline';
+                text.textContent = 'Hors-ligne';
+            }
+        }
+
+        setInterval(verifierSession, 30000);
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        if (verifierAuthentification()) {
+            chargerModule();
+        }
+    </script>
+</body>
+</html>

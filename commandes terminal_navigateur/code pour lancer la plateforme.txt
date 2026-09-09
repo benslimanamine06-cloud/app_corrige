@@ -1,0 +1,10 @@
+cd ~/Bureau/app_corrige
+python3 app.py
+
+
+
+LA MEILLEURE COMMANDE
+
+cd ~/Bureau/app_corrige && pkill -f "python3 app.py" 2>/dev/null; sleep 1; find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null; find . -type f -name "*.pyc" -delete 2>/dev/null; python3 app.py
+  -----------------------------------------------------
+cd ~/Bureau/app_corrige && pkill -f "python3 app.py" 2>/dev/null; sleep 1; rm -rf __pycache__ *.pyc */__pycache__ */*.pyc 2>/dev/null; python3 app.py

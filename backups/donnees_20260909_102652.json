@@ -1,0 +1,1720 @@
+{
+    "all_eleves": {
+        "niveaux": [
+            "7b1",
+            "7b2",
+            "9b2"
+        ],
+        "donnees": {
+            "7b1": {
+                "eleves": [
+                    {
+                        "nom": "aaaaaaaa",
+                        "notes": {
+                            "oral": "",
+                            "controle": "",
+                            "synthese": ""
+                        },
+                        "comportement": {
+                            "compteurs": {},
+                            "remarques": ""
+                        },
+                        "photo": "",
+                        "id": "mtoo6vvpwfom2"
+                    }
+                ]
+            },
+            "7b2": {
+                "eleves": []
+            },
+            "9b2": {
+                "eleves": []
+            }
+        },
+        "typesCompteurs": [
+            {
+                "id": "devoir",
+                "nom": "Devoirs non faits"
+            },
+            {
+                "id": "cahier",
+                "nom": "Oubli de cahier"
+            },
+            {
+                "id": "livre",
+                "nom": "Oubli de livre"
+            }
+        ]
+    },
+    "all_cours": {
+        "niveaux": [
+            "7ème Année de base",
+            "9ème Année de base"
+        ],
+        "cours": {
+            "7ème Année de base": {
+                "modules": [
+                    {
+                        "id": "mod_0_1788764649",
+                        "trimestre": "Trimestre 1",
+                        "titre": "Module de contrôle et de consolidation des prés recquis",
+                        "ordre": 0,
+                        "seances": [
+                            {
+                                "id": "s_1_mtqy08uv",
+                                "titre": "test",
+                                "contenu": "",
+                                "diaporama": [
+                                    {
+                                        "contenu": "<span class=\"trigger-group trigger-editor\" data-qcm=\"false\"><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ aaaaaaaaaaaa ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\">11111111111111111111</div></div></span>",
+                                        "alignement": "center",
+                                        "modeQCM": false
+                                    }
+                                ],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_2_mtqy08uw",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [
+                                    {
+                                        "contenu": "Cliquez ici pour modifier...",
+                                        "alignement": "center",
+                                        "modeQCM": null
+                                    }
+                                ],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_3_mtqy08uw",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_4_mtqy08ux",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_5_mtqy08ux",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_6_mtqy08uy",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_7_mtqy08uy",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_8_mtqy08uz",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_9_mtqy08uz",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_10_mtqy08v0",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_11_mtqy08v0",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_12_mtqy08v0",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_1_1788764649",
+                        "trimestre": "Trimestre 1",
+                        "titre": "Module 2",
+                        "ordre": 1,
+                        "seances": [
+                            {
+                                "id": "s_13_mtqy08v1",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_14_mtqy08v1",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_15_mtqy08v1",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_16_mtqy08v2",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_17_mtqy08v2",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_18_mtqy08v2",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_19_mtqy08v3",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_20_mtqy08v3",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_21_mtqy08v3",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_22_mtqy08v4",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_23_mtqy08v4",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_24_mtqy08v4",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_2_1788764649",
+                        "trimestre": "Trimestre 1",
+                        "titre": "Lecture suivie",
+                        "ordre": 2,
+                        "seances": [
+                            {
+                                "id": "s_25_mtqy08v5",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_26_mtqy08v5",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_27_mtqy08v6",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_28_mtqy08v6",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_29_mtqy08v6",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_30_mtqy08v7",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_31_mtqy08v7",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_32_mtqy08v7",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_33_mtqy08v8",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_34_mtqy08v8",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_35_mtqy08v8",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_36_mtqy08v9",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_3_1788764649",
+                        "trimestre": "Trimestre 2",
+                        "titre": "Module 3",
+                        "ordre": 3,
+                        "seances": [
+                            {
+                                "id": "s_37_mtqy08v9",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_38_mtqy08v9",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_39_mtqy08va",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_40_mtqy08va",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_41_mtqy08vb",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_42_mtqy08vb",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_43_mtqy08vb",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_44_mtqy08vc",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_45_mtqy08vc",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_46_mtqy08vc",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_47_mtqy08vd",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_48_mtqy08vd",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_4_1788764649",
+                        "trimestre": "Trimestre 2",
+                        "titre": "Module 4",
+                        "ordre": 4,
+                        "seances": [
+                            {
+                                "id": "s_49_mtqy08vd",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_50_mtqy08ve",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_51_mtqy08ve",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_52_mtqy08ve",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_53_mtqy08ve",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_54_mtqy08vf",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_55_mtqy08vf",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_56_mtqy08vg",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_57_mtqy08vg",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_58_mtqy08vg",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_59_mtqy08vg",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_60_mtqy08vg",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_5_1788764649",
+                        "trimestre": "Trimestre 2",
+                        "titre": "Lecture suivie",
+                        "ordre": 5,
+                        "seances": [
+                            {
+                                "id": "s_61_mtqy08vh",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_62_mtqy08vh",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_63_mtqy08vh",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_64_mtqy08vh",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_65_mtqy08vh",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_66_mtqy08vi",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_67_mtqy08vi",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_68_mtqy08vi",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_69_mtqy08vi",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_70_mtqy08vi",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_71_mtqy08vi",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_72_mtqy08vj",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_6_1788764649",
+                        "trimestre": "Trimestre 3",
+                        "titre": "Module 5",
+                        "ordre": 6,
+                        "seances": [
+                            {
+                                "id": "s_73_mtqy08vj",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_74_mtqy08vj",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_75_mtqy08vj",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_76_mtqy08vj",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_77_mtqy08vj",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_78_mtqy08vk",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_79_mtqy08vk",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_80_mtqy08vk",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_81_mtqy08vk",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_82_mtqy08vk",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_83_mtqy08vk",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_84_mtqy08vl",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    },
+                    {
+                        "id": "mod_7_1788764649",
+                        "trimestre": "Trimestre 3",
+                        "titre": "Module 6",
+                        "ordre": 7,
+                        "seances": [
+                            {
+                                "id": "s_85_mtqy08vl",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_86_mtqy08vl",
+                                "titre": "Compréhension écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_87_mtqy08vl",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_88_mtqy08vl",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_89_mtqy08vl",
+                                "titre": "Compréhension orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_90_mtqy08vm",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_91_mtqy08vm",
+                                "titre": "Production orale",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_92_mtqy08vm",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_93_mtqy08vm",
+                                "titre": "Lecture",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_94_mtqy08vm",
+                                "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_95_mtqy08vn",
+                                "titre": "Lecture d'image",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            },
+                            {
+                                "id": "s_96_mtqy08vn",
+                                "titre": "Expression écrite",
+                                "contenu": "",
+                                "diaporama": [],
+                                "leconBrute": false,
+                                "titreLecon": "",
+                                "indicative": true
+                            }
+                        ]
+                    }
+                ]
+            },
+            "9ème Année de base": {
+                "modules": []
+            }
+        }
+    },
+    "donnees_seances_7ème_Année_de_base__Trimestre_1__Module_1": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [
+                {
+                    "contenu": "<p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><font face=\"Sawasdee\"><b>Questions et réponses :</b></font></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\" data-qcm=\"false\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\"><span class=\"trigger-group trigger-editor\"><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\"><br></div></div> <div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ ❓ Qui sont les personnages principaux dans cette histoire ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\">Les personnages principaux sont Anatole, Petit Ange,</div></div></span></div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); white-space: normal; overflow-wrap: break-word;\"><font style=\"\" face=\"Georgia\" size=\"5\">Les personnages principaux sont Anatole, Petit Ange, et leur père.</font></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Comment décririez-vous Anatole ? Et Petit Ange ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Arial; font-size: 30px; color: rgb(26, 26, 46);\"><span style=\"font-family: Georgia; font-size: 30px; color: rgb(26, 26, 46);\">Anatole est habituellement turbulent, mais il essaie d’adopter un comportement exemplaire lors de ce repas. Petit Ange, qui est habituellement sage, se montre espiègle et teste les limites de son frère.</span></span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Que pensez-vous du comportement des parents dans ce récit ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Arial; font-size: 30px; color: rgb(26, 26, 46);\"><span style=\"font-family: Georgia; font-size: 30px; color: rgb(26, 26, 46);\">Le père est surpris par le comportement d’Anatole. Il maintient son autorité à table, mais il semble être davantage habitué à réprimander Anatole qu’à observer les provocations de Petit Ange.</span></span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 1.99cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><br></p>",
+                    "alignement": "left",
+                    "modeQCM": false
+                },
+                {
+                    "contenu": "<p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><font face=\"Sawasdee\"><b>Questions et réponses :</b></font></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\" data-qcm=\"false\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Qui sont les personnages principaux dans cette histoire ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Arial; font-size: 34px; color: rgb(26, 26, 46);\"><span style=\"font-family: Georgia; font-size: 34px; color: rgb(26, 26, 46);\">Les personnages principaux sont Anatole, Petit Ange, et leur père.</span></span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Comment décririez-vous Anatole ? Et Petit Ange ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Arial; font-size: 30px; color: rgb(26, 26, 46);\"><span style=\"font-family: Georgia; font-size: 30px; color: rgb(26, 26, 46);\">Anatole est habituellement turbulent, mais il essaie d’adopter un comportement exemplaire lors de ce repas. Petit Ange, qui est habituellement sage, se montre espiègle et teste les limites de son frère.</span></span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 0.75cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Que pensez-vous du comportement des parents dans ce récit ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Arial; font-size: 30px; color: rgb(26, 26, 46);\"><span style=\"font-family: Georgia; font-size: 30px; color: rgb(26, 26, 46);\">Le père est surpris par le comportement d’Anatole. Il maintient son autorité à table, mais il semble être davantage habitué à réprimander Anatole qu’à observer les provocations de Petit Ange.</span></span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; margin-left: 1.99cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><br></p>",
+                    "alignement": "left",
+                    "modeQCM": false
+                },
+                {
+                    "contenu": "<p lang=\"fr\" class=\"western\" style=\"color: rgb(0, 0, 0); line-height: 16px; margin-bottom: 0.21cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal; margin-top: 0.21cm;\"><font face=\"Sawasdee\"><b>b. Tableau des Événements Principaux</b></font></p><p lang=\"fr\" class=\"western\" style=\"color: rgb(0, 0, 0); line-height: 18.4px; margin-bottom: 0.25cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><font face=\"Sawasdee\"><b>Questions et réponses :</b></font></p><ul style=\"color: rgb(0, 0, 0); font-size: medium; white-space: normal;\"><li style=\"display: block;\"><p lang=\"fr\" class=\"western\" style=\"line-height: 18.4px; margin-bottom: 0.25cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><span class=\"trigger-group trigger-editor\" data-qcm=\"false\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Qu'est-ce qui change dans l'attitude d'Anatole pendant ce repas ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\"><span style=\"font-family: Georgia; font-size: 33px; color: rgb(26, 26, 46);\">Anatole décide de se comporter parfaitement à table, utilisant les couverts correctement et ne réagissant pas aux provocations de son frère.</span></div></div><p></p><p lang=\"fr\" class=\"western\" style=\"line-height: 18.4px; margin-bottom: 0.25cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Comment Petit Ange réagit-il à ce changement ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\">Petit Ange est surpris et déstabilisé par ce changement. Il tente de provoquer Anatole en lui lançant un petit pois puis en lui donnant un coup de pied sous la table.</div></div><p></p><p lang=\"fr\" class=\"western\" style=\"line-height: 18.4px; margin-bottom: 0.25cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><span class=\"trigger-group trigger-editor\"></span></p><div class=\"trigger-wrapper\" style=\"margin: 8px 0px; padding: 10px 14px; border: 1px solid rgb(233, 236, 239); border-radius: 8px; background: rgb(250, 251, 252);\"><div class=\"trigger-question\" style=\"font-weight: 600; color: rgb(111, 66, 193); margin-bottom: 6px; font-size: 15px;\">❓ Comment réagit le père à la situation ?</div><div class=\"trigger-reponse-content\" style=\"margin-left: 16px; padding-left: 12px; border-left: 3px solid rgb(40, 167, 69); color: rgb(21, 87, 36); font-size: 14px; white-space: normal; overflow-wrap: break-word;\">Le père est surpris de voir Anatole se comporter correctement. Cependant, lorsqu'Anatole crie après avoir reçu un coup de pied, le père le réprimande, pensant qu'il est responsable du désordre.</div></div><p></p><p lang=\"fr\" class=\"western\" style=\"line-height: 18.4px; margin-bottom: 0.25cm; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><br></p></li></ul>",
+                    "alignement": "left",
+                    "modeQCM": false
+                },
+                {
+                    "contenu": "<p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><font face=\"Sawasdee\"><b>Tableau des Événements Principaux :</b></font></p><table width=\"643\" cellpadding=\"2\" cellspacing=\"0\"><colgroup><col width=\"291\"><col width=\"341\"></colgroup><tbody><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" align=\"center\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\"><b>Événement</b></font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" align=\"center\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\"><b>Moment Clé</b></font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">La famille se met à table</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Début de la scène, contexte de repas familial</font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Anatole adopte un comportement exemplaire</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Anatole décide d’être parfait</font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Petit Ange provoque Anatole en lui lançant un petit pois</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Petit Ange est surpris par le changement de son frère</font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Anatole maîtrise ses émotions</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Anatole choisit de ne pas réagir</font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Petit Ange lui donne un coup de pied</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Petit Ange tente de ramener le comportement habituel de son frère</font></p></td></tr><tr><td width=\"291\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Le père réprimande Anatole</font></p></td><td width=\"341\" bgcolor=\"#ffffff\" style=\"padding: 0cm 0.05cm; background: rgb(255, 255, 255); border: 1px solid rgb(0, 0, 0);\"><p lang=\"fr\" class=\"western\" style=\"margin-bottom: 0.25cm; color: rgb(0, 0, 0); line-height: 18.4px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt;\"><font face=\"Sawasdee\">Le père pense qu’Anatole est responsable du désordre</font></p></td></tr></tbody></table><p lang=\"fr\" class=\"western\" style=\"margin-top: 0.25cm; margin-bottom: 0.21cm; color: rgb(0, 0, 0); line-height: 16px; direction: ltr; background: transparent; font-family: Arial, sans-serif; font-size: 12pt; white-space: normal;\"><br></p>",
+                    "alignement": "left",
+                    "modeQCM": null
+                }
+            ],
+            "titreLecon": "\"À Table\" (p40)"
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_1__Module_2": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_1__Lecture_suivie": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_2__Module_3": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_2__Module_4": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_2__Lecture_suivie": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_3__Module_5": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "donnees_seances_7ème_Année_de_base__Trimestre_3__Module_6": [
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Compréhension orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Production orale",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Langue (Grammaire / Conjugaison / Orthographe)",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Lecture d'image",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        },
+        {
+            "titre": "Expression écrite",
+            "contenu": "",
+            "leconBrute": false,
+            "diaporama": [],
+            "titreLecon": ""
+        }
+    ],
+    "_version": 70,
+    "_versions": {
+        "donnees_seances_7ème_Année_de_base__Trimestre_1__Module_1": 429,
+        "all_eleves": 1,
+        "all_cours": 234
+    },
+    "_migre": true
+}

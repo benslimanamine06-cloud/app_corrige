@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Connexion</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="api.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f4f8;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 35px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+            animation: fadeUp 0.5s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        .card .sub {
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            font-size: 14px;
+            color: #495057;
+            margin-bottom: 6px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+        input[type="password"]:focus {
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 4px rgba(111, 66, 193, 0.1);
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            margin-top: 8px;
+            background: #6f42c1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation;
+        }
+        .btn-login:active { transform: scale(0.97); }
+        .btn-login:hover { background: #5a32a3; }
+        .btn-login:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .error { 
+            color: #dc3545; 
+            font-size: 14px; 
+            margin-top: 12px; 
+            display: none; 
+            text-align: center;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+        }
+        .error.show { display: block; }
+        .success { 
+            color: #28a745; 
+            font-size: 14px; 
+            margin-top: 12px; 
+            display: none; 
+            text-align: center;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+        }
+        .success.show { display: block; }
+        .links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .links a {
+            color: #6f42c1;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .links a:hover { text-decoration: underline; }
+        .status-indicator {
+            text-align: center;
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 12px;
+            display: none;
+        }
+        .status-indicator.show { display: block; }
+        .status-indicator .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e9ecef;
+            border-top-color: #6f42c1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .footer-info {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #adb5bd;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 16px;
+        }
+        .footer-info .server-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .footer-info .server-status.online { background: #28a745; }
+        .footer-info .server-status.offline { background: #dc3545; }
+        .footer-info .server-status.checking { background: #fd7e14; animation: pulse 1s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 480px) {
+            .card { padding: 30px 20px; }
+            .card h2 { font-size: 20px; }
+            .links { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>🔐 Espace sécurisé</h2>
+        <p class="sub">Protégez l'accès à la plateforme</p>
+
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" placeholder="Entrez le mot de passe" 
+                   onkeypress="if(event.key==='Enter') verifier()" autofocus>
+        </div>
+
+        <button class="btn-login" id="btnLogin" onclick="verifier()">🔓 Se connecter</button>
+
+        <div id="error-msg" class="error">❌ Mot de passe incorrect</div>
+        <div id="success-msg" class="success">✅ Mot de passe modifié avec succès</div>
+        <div id="status-msg" class="status-indicator">
+            <span class="spinner"></span> Connexion en cours...
+        </div>
+
+        <div class="links">
+            <a onclick="changerMdp()">🔑 Changer le mot de passe</a>
+            <a onclick="resetMdp()">🔄 Mot de passe oublié ?</a>
+        </div>
+
+        <div class="footer-info">
+            <span class="server-status checking" id="serverStatus"></span>
+            <span id="serverStatusText">Vérification du serveur...</span>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // ÉTAT
+        // ============================================================
+        let tentativeConnexion = false;
+
+        // ============================================================
+        // VÉRIFICATION DU SERVEUR
+        // ============================================================
+        async function verifierServeur() {
+            const status = document.getElementById('serverStatus');
+            const text = document.getElementById('serverStatusText');
+            
+            try {
+                const response = await fetch('/');
+                if (response.ok) {
+                    status.className = 'server-status online';
+                    text.textContent = '✅ Serveur disponible';
+                } else {
+                    status.className = 'server-status offline';
+                    text.textContent = '⚠️ Serveur indisponible';
+                }
+            } catch (e) {
+                status.className = 'server-status offline';
+                text.textContent = '⚠️ Impossible de contacter le serveur';
+            }
+        }
+
+        verifierServeur();
+        setInterval(verifierServeur, 30000);
+
+        // ============================================================
+        // CONNEXION
+        // ============================================================
+        async function verifier() {
+            if (tentativeConnexion) return;
+            
+            const mdp = document.getElementById('password').value;
+            if (!mdp) {
+                document.getElementById('error-msg').textContent = '⚠️ Veuillez saisir un mot de passe';
+                document.getElementById('error-msg').className = 'error show';
+                return;
+            }
+
+            const btn = document.getElementById('btnLogin');
+            const statusMsg = document.getElementById('status-msg');
+            const errorMsg = document.getElementById('error-msg');
+            const successMsg = document.getElementById('success-msg');
+
+            // Désactiver le bouton
+            tentativeConnexion = true;
+            btn.disabled = true;
+            btn.textContent = '⏳ Connexion...';
+            statusMsg.className = 'status-indicator show';
+            errorMsg.className = 'error';
+            successMsg.className = 'success';
+
+            try {
+                const resultat = await API.login(mdp);
+                
+                if (resultat) {
+                    // Réussite
+                    successMsg.textContent = '✅ Connexion réussie ! Redirection...';
+                    successMsg.className = 'success show';
+                    statusMsg.className = 'status-indicator';
+                    
+                    // Rediriger après un court délai
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 500);
+                } else {
+                    // Échec
+                    errorMsg.textContent = '❌ Mot de passe incorrect. Veuillez réessayer.';
+                    errorMsg.className = 'error show';
+                    statusMsg.className = 'status-indicator';
+                    
+                    // Réactiver
+                    tentativeConnexion = false;
+                    btn.disabled = false;
+                    btn.textContent = '🔓 Se connecter';
+                    document.getElementById('password').value = '';
+                    document.getElementById('password').focus();
+                }
+            } catch (e) {
+                errorMsg.textContent = `❌ Erreur : ${e.message || 'Problème de connexion au serveur'}`;
+                errorMsg.className = 'error show';
+                statusMsg.className = 'status-indicator';
+                
+                tentativeConnexion = false;
+                btn.disabled = false;
+                btn.textContent = '🔓 Se connecter';
+            }
+        }
+
+        // ============================================================
+        // GESTION DU MOT DE PASSE (côté serveur)
+        // ============================================================
+        async function changerMdp() {
+            // Demander l'ancien mot de passe
+            const ancien = prompt('Entrez votre mot de passe actuel :');
+            if (ancien === null) return;
+            
+            // Vérifier l'ancien mot de passe
+            const verif = await API.login(ancien);
+            if (!verif) {
+                alert('❌ Ancien mot de passe incorrect.');
+                return;
+            }
+            
+            // Demander le nouveau mot de passe
+            const nouveau = prompt('Entrez le nouveau mot de passe (minimum 4 caractères) :');
+            if (!nouveau || nouveau.trim().length < 4) {
+                alert('⚠️ Le mot de passe doit contenir au moins 4 caractères.');
+                return;
+            }
+            
+            // Confirmation
+            const confirmation = prompt('Confirmez le nouveau mot de passe :');
+            if (confirmation !== nouveau) {
+                alert('❌ Les mots de passe ne correspondent pas.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/change_password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API._getToken()}`
+                    },
+                    body: JSON.stringify({ 
+                        old_password: ancien, 
+                        new_password: nouveau 
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.status === 'success') {
+                    document.getElementById('success-msg').textContent = '✅ Mot de passe modifié avec succès !';
+                    document.getElementById('success-msg').className = 'success show';
+                    document.getElementById('error-msg').className = 'error';
+                    
+                    // Déconnecter pour forcer la reconnexion avec le nouveau mot de passe
+                    setTimeout(() => {
+                        alert('🔐 Vous allez être déconnecté pour utiliser le nouveau mot de passe.');
+                        localStorage.removeItem('api_token');
+                        localStorage.removeItem('api_token_expire');
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    alert(`❌ Erreur : ${data.message || 'Impossible de changer le mot de passe'}`);
+                }
+            } catch (e) {
+                alert(`❌ Erreur de connexion : ${e.message}`);
+            }
+        }
+
+        function resetMdp() {
+            if (confirm('⚠️ Voulez-vous réinitialiser le mot de passe par défaut ("prof123") ?\n\nCette action ne peut pas être annulée.')) {
+                if (confirm('⚠️ Confirmez-vous la réinitialisation du mot de passe ?')) {
+                    fetch('/reset_password', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ reset: true })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert('✅ Mot de passe réinitialisé à "prof123".\n\nVeuillez vous reconnecter avec ce mot de passe.');
+                            localStorage.removeItem('api_token');
+                            localStorage.removeItem('api_token_expire');
+                            window.location.reload();
+                        } else {
+                            alert(`❌ Erreur : ${data.message || 'Réinitialisation impossible'}`);
+                        }
+                    })
+                    .catch(e => {
+                        alert(`❌ Erreur de connexion : ${e.message}`);
+                    });
+                }
+            }
+        }
+
+        // ============================================================
+        // RACCOURCI CLAVIER
+        // ============================================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const active = document.activeElement;
+                if (active && active.id === 'password') {
+                    verifier();
+                }
+            }
+        });
+
+        // ============================================================
+        // INIT - Vérifier si déjà connecté
+        // ============================================================
+        if (API._isAuthenticated()) {
+            // Si déjà connecté, rediriger
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
