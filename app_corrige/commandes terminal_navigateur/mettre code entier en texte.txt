@@ -1,9 +1,0 @@
-
-cd ~/Bureau/app_corrige
-
-find . -type f \( -name "*.html" -o -name "*.js" -o -name "*.py" -o -name "*.json" \) -exec echo "=== FICHIER: {} ===" \; -exec cat {} \; > code_complet.txt
-
-
-
-
-
