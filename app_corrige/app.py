@@ -21,8 +21,8 @@ from urllib.parse import urlparse, parse_qs
 # CONFIGURATION
 # ============================================================
 PORT = 8000
-DATA_FILE = "donnees.json"
-BACKUP_DIR = "backups"
+DATA_FILE = "data/donnees.json"
+BACKUP_DIR = "instance/backups"
 MAX_BACKUPS = 30
 
 # Hash du mot de passe par défaut (prof123)
