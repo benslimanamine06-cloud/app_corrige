@@ -1,2 +1,0 @@
-cd ~/Bureau/app_corrige
-python3 app.py
